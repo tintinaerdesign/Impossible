@@ -13,7 +13,7 @@ const App = () => {
       setLoading(true);
       // ดึงข้อมูลเหรียญท็อปๆ (ในที่นี้ขอดึง Bitcoin มาโชว์เป็นหลักก่อน)
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page100=&page=1&sparkline=false",
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false",
       );
       const data = await response.json();
       // เก็บข้อมูลที่ได้ลงใน State coins
@@ -154,10 +154,5 @@ const App = () => {
     </div>
   );
 };
-<routes>
-  <route path="/" element={<Home />} />
-
-  <route path="/start-d" element={<cryptoWidgetPage />} />
-</routes>;
 
 export default App;

@@ -1,5 +1,6 @@
 import "./index.css";
-import StartD from "./pages/BitcoinCalc";
+import StartD from "./pages/StartD";
+import App from "./App.jsx";
 
 export default function App() {
   return (
