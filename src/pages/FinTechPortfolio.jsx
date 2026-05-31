@@ -24,7 +24,7 @@ ChartJS.register(
   Filler,
 );
 
-export default function StartD() {
+export default function BitcoinCalc() {
   // --- 1. State ของระบบการจัดการข้อมูล (React Reactive States) ---
   const [monthlySaving, setMonthlySaving] = useState(200);
   const [savingPeriod, setSavingPeriod] = useState(4);
