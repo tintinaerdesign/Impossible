@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import FirstPage from "./pages/FirstPage";
-import Calculator from "./pages/calculator";
+import Calculator from "./pages/Calculator";
 import CoinList from "./pages/coinlist";
 
 export default function App() {
