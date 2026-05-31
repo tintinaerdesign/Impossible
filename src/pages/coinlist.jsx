@@ -29,38 +29,30 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#11070b] text-white font-sans relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-pink-900/15 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[20%] right-[-5%] w-[600px] h-[600px] bg-orange-900/10 rounded-full blur-[150px] pointer-events-none"></div>
+    <div className="min-h-screen bg-linear-to-br from-black to-gray-700 text-white font-sans relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[20%] right-[-5%] w-[600px] h-[600px] pointer-events-none"></div>
 
       <nav className="w-full grid grid-cols-3 items-center px-10 py-3 bg-[#160b10]/40 backdrop-blur-md border-b border-white/5 relative z-10">
-        <div className="logo tracking-wide justify-self-start">
-          Start <span className="text-white">D</span>
+        <div className="logo hover:scale-105 hover:brightness-110 select-none justify-self-start">
+          <span
+            className="logo whitespace-nowrap ml-3 transition-all duration-300 hover:scale-105 hover:brightness-110 select-none"
+            style={{
+              fontSize: "36px",
+              fontWeight: "800",
+              letterSpacing: "-2px",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, #d879a8, #ec0065)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Start D
+          </span>
         </div>
 
-        <div className="flex items-center gap-8 text-lg text-gray-400 justify-self-center">
-          <a href="#" className="hover:text-white transition-colors">
-            Calculator
-          </a>
-          <a
-            href="#"
-            className="hover:text-white transition-colors whitespace-nowrap"
-          >
-            inflation
-          </a>
-          <a
-            href="#"
-            className="hover:text-white transition-colors whitespace-nowrap"
-          >
-            Dream Future Cost
-          </a>
-          <a
-            href="#"
-            className="text-white font-meduim border-b-2 border-[#e65c8c] pb-1 whitespace-nowrap"
-          >
-            Price Widget
-          </a>
-        </div>
+        <div className="flex items-center gap-8 text-lg text-gray-400 justify-self-center"></div>
 
         <div className="justify-self-end"></div>
       </nav>

@@ -1,6 +1,6 @@
 # 🚀 Start D - Crypto Market Dashboard
 
-<img src="price-widget.png" width="900">
+<img src="/public/price-widget.png" width="900" alt="project">
 
 A modern fintech-inspired web application built with **React + Vite + Tailwind CSS**.
 
