@@ -566,3 +566,5 @@ export default function StartD() {
     </div>
   );
 }
+
+export default BitcoinCalc;
