@@ -2,33 +2,41 @@ import { Link } from "react-router-dom";
 
 export default function FirstPage() {
   return (
-    <div className="min-h-screen bg-[#0b0a0f] text-white flex flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-6xl md:text-7xl font-black mb-6">
-        Welcome to{" "}
-        <span className="bg-gradient-to-r from-[#f2a900] to-[#ec0065] bg-clip-text text-transparent">
+    <div className="min-h-screen bg-linear-60 from-black to-gray-500 text-white flex flex-col items-center justify-center">
+      <h1 className="text-6xl font-bold mb-6">
+        Welcome to
+        <span
+          style={{
+            fontSize: "80px",
+            fontWeight: "800",
+            letterSpacing: "-2px",
+            paddingInline: "8px",
+            background: "linear-gradient(135deg, #d879a8, #ec0065)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
           Start D
         </span>
       </h1>
 
-      <p className="text-zinc-400 max-w-xl text-lg mb-10">
-        Explore crypto markets, inflation impact, and future purchasing power
-        with interactive tools.
+      <p className="text-zinc-400 mb-8">
+        Explore crypto market and inflation tools
       </p>
-
-      <div className="flex gap-4 flex-wrap justify-center">
+      <div className="flex flex-cols-2 gap-8">
         <Link
-          to="/bitcoin-calculator"
-          className="px-8 py-4 rounded-2xl bg-gradient-to-r from-[#ec0065] to-[#f2a900] font-semibold hover:scale-105 transition-transform"
+          to="/Calculator"
+          className="px-8 py-4 rounded-2xl text-xl font-semibold bg-white text-black hover:bg-pink-700 transition"
         >
-          Open Calculator
+          Open Inflation Calculator
         </Link>
-
-        <a
-          href="#"
-          className="px-8 py-4 rounded-2xl border border-white/10 hover:bg-white/5 transition"
+        <Link
+          to="/coinlist"
+          className="px-8 py-4 rounded-2xl text-xl font-semibold text-shadow-emerald-400 bg-linear-to-r from-orange-400 to-purple-600 hover:scale-3d transition"
         >
-          Explore Market
-        </a>
+          Open Coin market
+        </Link>
       </div>
     </div>
   );

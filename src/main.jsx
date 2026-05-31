@@ -2,12 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-// 1. นำเข้า BrowserRouter มาที่นี่
 import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {/* 2. เอามาครอบรอบตัว App แบบนี้เลยครับ */}
     <BrowserRouter>
       <App />
     </BrowserRouter>
