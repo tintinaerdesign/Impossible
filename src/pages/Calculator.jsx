@@ -5,6 +5,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   PointElement,
+  LinearScale,
   LineElement,
   Title,
   Tooltip,
@@ -532,14 +533,14 @@ export default function Calculator() {
             </p>
             <Link
               to="/coinlist"
-              className="w-full sm:w-auto inline-block px-8 py-4 rounded-2xl text-center text-white text-2xl bg-gradient-to-r from-orange-400 to-pink-500 hover:scale-105 active:scale-95 transition duration-300 shadow-lg shadow-orange-500/20"
+              className="w-auto sm:w-auto inline-block px-8 py-4 rounded-2xl text-center text-white text-2xl bg-gradient-to-r from-orange-400 to-pink-500 hover:scale-105 active:scale-95 transition duration-300 shadow-lg shadow-orange-500/20"
             >
               Explore Coin Market
             </Link>
           </div>
 
           {/* ฝั่งขวา: Live Crypto Card */}
-          <div className="bg-[#121214] w-full w-full mx-auto md:mr-0 border border-white/5 rounded-3xl p-6 shadow-2xl group hover:border-pink-500/30 transition-all duration-300 order-2">
+          <div className="bg-[#121214] w-full mx-auto md:mx-w-[400px] border border-white/5 rounded-3xl p-6 shadow-2xl group hover:border-pink-500/30 transition-all duration-300 order-2">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl md:text-3xl text-gray-200 font-mono">
                 BTC/USDT
