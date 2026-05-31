@@ -1,10 +1,12 @@
-import "./index.css";
-import StartD from "./pages/StartD";
+import { Routes, Route } from "react-router-dom";
+import coinlist from "./pages/coinlist";
+import FirstPage from "./pages/FirstPage";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0b0a0f] text-white font-sans">
-      <StartD />
-    </div>
+    <Routes>
+      <Route path="/" element={<FirstPage />} />
+      <Route path="/coinlist" element={<coinlist />} />
+    </Routes>
   );
 }
