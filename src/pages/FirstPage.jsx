@@ -37,7 +37,6 @@ function Hero3D() {
         <hana-viewer
           ref={viewerRef}
           url="https://prod.spline.design/fQw9vEaPML4OLIUp-ibO/scene.hanacode"
-          // ปรับปรุงสไตล์: ใส่ background: "transparent" ล็อคให้แกนกลางโปร่งใสทะลุเห็นพื้นหลังเว็บไล่เฉดสีของคุณ
           style={{
             width: "100%",
             height: "100%",
@@ -52,12 +51,10 @@ function Hero3D() {
   );
 }
 
-// 2. หน้าหลัก FirstPage (จัด Layout แยกฝั่งซ้าย-ขวาอย่างเป็นระเบียบ)
 export default function FirstPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-700 text-white font-[system-ui]">
       <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        {/* ฝั่งซ้าย: รวมข้อความและปุ่มให้อยู่ในกล่องเดียวกัน ไม่กระจัดกระจาย */}
         <div className="lg:col-span-7 flex flex-col space-y-6">
           <h1 className="font-['Orbitron'] text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight text-left">
             Navigate Purchasing power <br /> & Inflation with Clarity
@@ -85,7 +82,7 @@ export default function FirstPage() {
           </div>
         </div>
 
-        {/* ฝั่งขวา: พื้นที่สำหรับโมเดล 3D เพียวๆ แบบไร้ตัวโหลดกวนใจ ค่อยๆ ปรากฏตัวออกมา */}
+        {/* ฝั่งขวา: พื้นที่ 3D ให้มันค่อยๆ ออกมานิดๆ */}
         <div className="lg:col-span-5 w-full">
           <Hero3D />
         </div>
