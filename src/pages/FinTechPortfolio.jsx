@@ -24,7 +24,7 @@ ChartJS.register(
   Filler,
 );
 
-export default function BitcoinCalc() {
+export default function FinTechPortfolio() {
   // --- 1. State ของระบบการจัดการข้อมูล ---
   const [monthlySaving, setMonthlySaving] = useState(200);
   const [savingPeriod, setSavingPeriod] = useState(4);
