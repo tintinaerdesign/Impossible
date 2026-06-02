@@ -10,7 +10,7 @@ const App = () => {
   const fetchCryptoData = async () => {
     try {
       setLoading(true);
-      // ดึงข้อมูลเหรียญท็อปๆ (ในที่นี้ขอดึง Bitcoin มาโชว์เป็นหลักก่อน)
+      // ดึงข้อมูลเหรียญท็อปๆ แหลกลาน
       const response = await fetch(
         "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false",
       );
@@ -30,7 +30,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-black to-gray-700 text-white font-sans relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[20%] right-[-5%] w-[600px] h-[600px] pointer-events-none"></div>
 
       <nav className="w-full grid grid-cols-3 items-center px-10 py-3 bg-[#160b10]/40 backdrop-blur-md border-b border-white/5 relative z-10">
@@ -58,7 +58,7 @@ const App = () => {
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-16 relative z-10">
-        <h1 className="text-2xl tracking-[6px] font-semibold text-gray-400 uppercase mb-8">
+        <h1 className="text-2xl tracking-[2px] font-semibold text-gray-400 uppercase mb-8">
           <span className="text-5xl text-[#e65c8c] font-light">C</span>rypto
           currencies market
         </h1>

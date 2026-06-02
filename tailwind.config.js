@@ -2,7 +2,13 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      // 🌟 เพิ่มโซน fontFamily ตรงนี้เข้าไปครับ
+      fontFamily: {
+        orbitron: ["Orbitron", "sans-serif"],
+        lexend: ["Lexend"],
+      },
+    },
   },
   plugins: [],
 };

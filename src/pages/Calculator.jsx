@@ -161,7 +161,7 @@ export default function Calculator() {
   return (
     <div className="bg-[#0b0b0d] bg-linear-to-br from-black to-gray-900 text-white min-h-screen font-sans antialiased overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 flex justify-between items-center border-b border-white/[0.05] w-full px-6 md:px-10 z-50 bg-[#0f0f0f]/80 backdrop-blur-md h-20">
+      <nav className="fixed top-0 left-0 right-0 flex items-center border-b border-white/[0.05] w-full px-6 md:px-10 z-50 bg-[#0f0f0f]/80 backdrop-blur-md h-20">
         <span
           className="logo whitespace-nowrap transition-all duration-300 hover:scale-105 hover:brightness-110 select-none"
           style={{
@@ -177,7 +177,7 @@ export default function Calculator() {
         >
           Start D
         </span>
-        {/* ซ่อนเมนูบน Mobile เพื่อไม่ให้เบียดโลโก้ */}
+
         <div className="hidden md:flex items-center gap-8">
           <ul className="flex items-center gap-8 text-[15px] font-medium">
             <li>

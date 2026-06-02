@@ -56,7 +56,7 @@ export default function FirstPage() {
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-700 text-white font-[system-ui]">
       <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 flex flex-col space-y-6">
-          <h1 className="font-['Orbitron'] text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight text-left">
+          <h1 className="font-['Orbitron'] text-4xl md:text-5xl lg:text-6xl font-black leading-[0.95] tracking-tight text-left">
             Navigate Purchasing power <br /> & Inflation with Clarity
           </h1>
 
@@ -83,7 +83,7 @@ export default function FirstPage() {
         </div>
 
         {/* ฝั่งขวา: พื้นที่ 3D ให้มันค่อยๆ ออกมานิดๆ */}
-        <div className="lg:col-span-5 w-full">
+        <div className="lg:col-span-5 w-full overflow-visible">
           <Hero3D />
         </div>
       </div>
