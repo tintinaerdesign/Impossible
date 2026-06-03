@@ -16,6 +16,7 @@ const App = () => {
       );
       const data = await response.json();
       // เก็บข้อมูลที่ได้ลงใน State coins
+      console.log(data[0]); // เช็คของกลางนะจ๊ะ ว่า API ส่งอะไรมาบ้าง
       setCoins(data);
       setLoading(false);
     } catch (error) {
@@ -90,17 +91,14 @@ const App = () => {
                 <tr>
                   <td
                     colSpan="5"
-                    className="px-6 py-16 text-center text-gray-500 tracking-wide text-sm"
+                    className="px-6 py-16 text-center animate-pulse text-gray-500 tracking-wide text-sm"
                   >
-                    กำลังดึงข้อมูลจากระบบดาวเทียมตลาดคริปโต...
+                    Fetching data...
                   </td>
                 </tr>
               ) : (
                 coins.map((coin) => (
-                  <tr
-                    key={coin.id}
-                    className="border-b border-white/5 hover:bg-white/[0.03] transition-all duration-200"
-                  >
+                  <tr className="border-b border-white/5 hover:bg-white/[0.03] transition-all duration-200">
                     <td className="px-6 py-4 text-left text-sm text-gray-500">
                       {coin.market_cap_rank}
                     </td>

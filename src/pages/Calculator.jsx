@@ -34,6 +34,8 @@ export default function Calculator() {
   const [liveBtcPrice, setLiveBtcPrice] = useState("0.00");
   const [selectedInflationYear, setSelectedInflationYear] =
     useState("the future");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const btcDataValues = [
     65, 59, 80, 81, 56, 55, 40, 50, 60, 75, 90, 85, 95, 110,
@@ -158,32 +160,143 @@ export default function Calculator() {
     ],
   };
 
-  return (
-    <div className="bg-[#0b0b0d] bg-linear-to-br from-black to-gray-900 text-white min-h-screen font-sans antialiased overflow-x-hidden">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 flex items-center border-b border-white/[0.05] w-full px-6 md:px-10 z-50 bg-[#0f0f0f]/80 backdrop-blur-md h-20">
-        <span
-          className="logo whitespace-nowrap transition-all duration-300 hover:scale-105 hover:brightness-110 select-none"
-          style={{
-            fontSize: "28px",
-            fontWeight: "800",
-            letterSpacing: "-1.5px",
-            cursor: "pointer",
-            background: "linear-gradient(135deg, #d879a8, #ec0065)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Start D
-        </span>
+  useEffect(() => {
+    const handleScroll = () => {
+      console.log("ระยะสกรอลล์ปัจจุบัน:", window.scrollY);
+      if (window.scrollY > 20) {
+        // ถ้าเลื่อนลงมามากกว่า 20px
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
 
-        <div className="hidden md:flex items-center gap-8">
-          <ul className="flex items-center gap-8 text-[15px] font-medium">
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+      },
+    );
+
+    document.querySelectorAll(".scroll-animate").forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="bg-[#0b0b0d] bg-linear-to-br from-black to-gray-900 text-white font-sans antialiased overflow-x-hidden">
+      {/* Navigation */}
+      <nav
+        className={`fixed px-6 z-50 left-1/2 -translate-x-1/2 flex items-center transition-all duration-500 ease-in-out ${
+          isScrolled
+            ? "top-4 h-14 w-11/12 rounded-2xl border border-white/10 bg-[#0f0f0f]/90 backdrop-blur-lg"
+            : "top-0 h-20 w-full border-b border-white/[0.05] bg-[#0f0f0f]/80 backdrop-blur-md"
+        }`}
+      >
+        {/* 💡 ใช้ Grid 3 คอลัมน์ขนาดเท่ากัน เพื่อบังคับให้ส่วนผสมตรงกลางอยู่กึ่งกลางกล่องเสมอโดยไม่ใช้ Absolute */}
+        <div className="w-full grid grid-cols-2 md:grid-cols-3 items-center relative">
+          {/* [1] ฝั่งซ้าย: Logo */}
+          <div className="flex justify-start">
+            <span
+              className={`logo whitespace-nowrap transition-all duration-500 hover:scale-105 hover:brightness-110 select-none ${
+                isScrolled ? "text-xl" : "text-[28px]"
+              }`}
+              style={{
+                fontWeight: "800",
+                letterSpacing: "-1.5px",
+                cursor: "pointer",
+                background: "linear-gradient(135deg, #d879a8, #ec0065)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Start D
+            </span>
+          </div>
+
+          {/* [2] ตรงกลาง: Menu สำหรับ Desktop */}
+          {/* 💡 ปรับมาใช้ flex justify-center บนระนาบปกติ ทำให้ล็อกจุดกึ่งกลางของตัวแคปซูลได้แม่นยำ ไม่บินซ้ายอีกต่อไป */}
+          <div className="hidden md:flex justify-center items-center">
+            <ul className="flex items-center gap-6 lg:gap-8 text-[14px] lg:text-[15px] font-medium whitespace-nowrap">
+              <li>
+                <a
+                  href="#calculator"
+                  className="hover:text-white text-gray-400 transition-colors"
+                >
+                  Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#inflation"
+                  className="hover:text-white text-gray-400 transition-colors"
+                >
+                  Inflation
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#price-widget"
+                  className="hover:text-white text-gray-400 transition-colors"
+                >
+                  Price Widget
+                </a>
+              </li>
+              <li>
+                <Link
+                  to="/coinlist"
+                  className="hover:text-white text-gray-400 transition-colors"
+                >
+                  Coin Market
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* [3] ฝั่งขวา: ปุ่ม Toggle บนมือถือ หรือพื้นที่ว่างบนคอมฯ */}
+          <div className="flex justify-end items-center">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              type="button"
+              className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none flex items-center justify-center"
+            >
+              <span className="material-symbols-outlined text-2xl">
+                {isMobileMenuOpen ? "close" : "menu"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* ==================== DROPDOWN MENU สำหรับ MOBILE ==================== */}
+        <div
+          className={`absolute left-0 w-full bg-[#0f0f0f]/95 backdrop-blur-lg border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out ${
+            isScrolled ? "top-14 rounded-b-2xl" : "top-20"
+          } ${
+            isMobileMenuOpen
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 -translate-y-4 pointer-events-none"
+          }`}
+        >
+          <ul className="flex flex-col p-6 space-y-4 text-base font-medium">
             <li>
               <a
                 href="#calculator"
-                className="hover:text-white text-gray-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
               >
                 Calculator
               </a>
@@ -191,7 +304,8 @@ export default function Calculator() {
             <li>
               <a
                 href="#inflation"
-                className="hover:text-white text-gray-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
               >
                 Inflation
               </a>
@@ -199,17 +313,26 @@ export default function Calculator() {
             <li>
               <a
                 href="#price-widget"
-                className="hover:text-white text-gray-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
               >
                 Price Widget
               </a>
             </li>
+            <li>
+              <Link
+                to="/coinlist"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block hover:text-white text-gray-400 py-2"
+              >
+                Coin Market
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
-
       {/* Hero Section */}
-      <section className="scroll-animate scroll-mt-24 flex flex-col px-6 py-24 md:py-32 w-full min-h-[70vh] items-center justify-center text-center">
+      <section className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 flex flex-col px-6 py-24 md:py-32 w-full min-h-[70vh] items-center justify-center text-center">
         <div className="max-w-2xl relative mt-12 z-10 space-y-4">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-zinc-200">
             See what{" "}
@@ -227,7 +350,7 @@ export default function Calculator() {
 
       {/* Calculator Section */}
       <section
-        className="scroll-animate scroll-mt-24 pb-16 w-full px-4 md:px-6"
+        className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 pb-16 w-full px-4 md:px-6"
         id="calculator"
       >
         <div className="max-w-5xl mx-auto w-full p-5 md:p-8 bg-[#121214] rounded-3xl border border-white/5 shadow-2xl">
@@ -288,7 +411,11 @@ export default function Calculator() {
 
                   {isDropdownOpen && (
                     <ul className="absolute left-0 w-full mt-2 bg-[#1a1a1c] border border-white/10 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      {[
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                        31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+                      ].map((year) => (
                         <li
                           key={year}
                           onClick={() => {
@@ -409,7 +536,10 @@ export default function Calculator() {
       </section>
 
       {/* Inflation Comparison Section */}
-      <section className="scroll-animate py-12 px-4 md:px-6" id="inflation">
+      <section
+        className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 py-12 px-4 md:px-6"
+        id="inflation"
+      >
         <div className="bg-[#121214] max-w-5xl mx-auto p-5 md:p-8 rounded-3xl border border-white/5 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
@@ -423,10 +553,10 @@ export default function Calculator() {
               </div>
 
               <div className="bg-gradient-to-br from-white/5 to-transparent p-5 md:p-6 rounded-2xl border border-white/10 relative overflow-hidden group hover:border-pink-500/30 transition-all duration-300">
-                <div className="text-zinc-400 text-sm">
+                <div className="text-zinc-400 text-lgnav">
                   In{" "}
-                  <span className="text-pink-400 font-semibold uppercase">
-                    {selectedInflationYear}
+                  <span className="text-zinc-400 text-lg">
+                    {savingPeriod} {savingPeriod === 1 ? "Year" : "Years"}
                   </span>
                 </div>
                 <p className="text-zinc-500 text-xs mt-0.5">
@@ -514,7 +644,7 @@ export default function Calculator() {
 
       {/* Real-time Crypto Price Widget Section */}
       <section
-        className="scroll-animate scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6"
+        className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6"
         id="price-widget"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[450px]">

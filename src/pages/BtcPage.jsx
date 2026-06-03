@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import BtcChart from "./BtcChart";
 
 // นำเข้าไอคอนดีไซน์มินิมอลลายเส้นตรงปก
 import {
@@ -14,7 +15,7 @@ import {
 } from "lucide-react";
 
 export default function BtcPage() {
-  // 1. 🌐 ใช้สเตต bitcoin สำหรับเก็บข้อมูลตัวเดียวโดดๆ ตัวแปร coins ตัดทิ้งไปได้เลย
+  // 1. 🌐 ใช้สเตตสำหรับเก็บข้อมูล
   const [bitcoin, setBitcoin] = useState(null);
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,13 +23,11 @@ export default function BtcPage() {
   const [usdtoThb, setUsdToThb] = useState(35.0); // เริ่มต้นด้วยค่าโดยประมาณก่อน
 
   // 🌟 ฟังก์ชันที่ 1: แยกสำหรับดึงอัตราแลกเปลี่ยน USD/THB โดยเฉพาะ
-
   const fetchUsdThb = async () => {
     try {
-      const fxResponse = await fetch(
-        "https://api.frankfurter.app/latest?from=USD&to=THB",
-      );
+      const fxResponse = await fetch("https://open.er-api.com/v6/latest/USD");
       const fxData = await fxResponse.json();
+      console.log("FX Data:", fxData);
       if (fxData && fxData.rates && fxData.rates.THB) {
         setUsdToThb(fxData.rates.THB);
       }
@@ -45,6 +44,7 @@ export default function BtcPage() {
       );
       const data = await response.json();
       setCoins(data);
+      setBitcoin(data[0]); // ถ้า Bitcoin อยู่ในตำแหน่งแรกของอาเรย์
     } catch (error) {
       console.error("Error fetching Crypto:", error);
     }
@@ -54,7 +54,6 @@ export default function BtcPage() {
   useEffect(() => {
     const loadAllData = async () => {
       setLoading(true);
-      // ยิงสองพระหน่อพร้อมกันด้วย Promise.all เพื่อความรวดเร็วดั่งสายฟ้า ⚡
       await Promise.all([fetchUsdThb(), fetchCryptoData()]);
       setLoading(false);
     };
@@ -111,7 +110,7 @@ export default function BtcPage() {
             Start DCA Now
           </h4>
           <p className="text-[11px] text-zinc-500 mb-4 leading-tight">
-            ลงทุนอย่างสม่ำเสมอ สร้างอนาคตที่มั่นคง
+            ลงุทนอย่างสม่ำเสมอ สร้างอนาคตที่มั่นคง
           </p>
           <button className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-500 to-orange-500 hover:opacity-90 transition shadow-lg shadow-pink-500/20">
             Start DCA your assets
@@ -140,7 +139,6 @@ export default function BtcPage() {
 
         {/* ส่วนหัวข้อมูลหลักสไตล์กระดานเทรดพรีเมียม */}
         <header className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-          {/* ข้อมูลราคาฝั่งซ้าย - ปรับเป็นชั้นข้อมูลของ Single Coin API */}
           <div className="flex items-center gap-4 xl:col-span-1">
             <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center text-xl font-bold text-black shadow-lg shadow-orange-500/30">
               ₿
@@ -157,20 +155,16 @@ export default function BtcPage() {
                   <>
                     <span className="text-3xl md:text-4xl text-pink-500 tracking-tight font-[Orbitron]">
                       ฿
-                      {(
-                        bitcoin.market_data.current_price.usd * usdToThb
-                      ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {(bitcoin.current_price * usdtoThb).toLocaleString(
+                        undefined,
+                        { minimumFractionDigits: 2 },
+                      )}
                     </span>
                     <span
-                      className={`text-xs font-bold ${bitcoin.market_data.price_change_percentage_24h >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                      className={`text-xs font-bold ${bitcoin.price_change_percentage_24h >= 0 ? "text-emerald-400" : "text-red-400"}`}
                     >
-                      {bitcoin.market_data.price_change_percentage_24h >= 0
-                        ? "▲"
-                        : "▼"}{" "}
-                      {bitcoin.market_data.price_change_percentage_24h.toFixed(
-                        2,
-                      )}
-                      % (24h)
+                      {bitcoin.price_change_percentage_24h >= 0 ? "▲" : "▼"}{" "}
+                      {bitcoin.price_change_percentage_24h.toFixed(2)}% (24h)
                     </span>
                   </>
                 ) : (
@@ -182,7 +176,7 @@ export default function BtcPage() {
             </div>
           </div>
 
-          {/* แถบสถิติ 4 ช่องด้านขวาบน (Market Cap, High, Low, Volume) */}
+          {/* แถบสถิติ 4 ช่องด้านขวาบน */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-zinc-950/40 p-4 rounded-2xl border border-zinc-900/60 backdrop-blur-sm xl:col-span-2 w-full">
             {bitcoin ? (
               <>
@@ -191,12 +185,7 @@ export default function BtcPage() {
                     Market Cap
                   </p>
                   <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                    ฿
-                    {(
-                      (bitcoin.market_data.market_cap.usd / 1e12) *
-                      usdToThb
-                    ).toFixed(2)}
-                    T
+                    ฿{((bitcoin.market_cap / 1e12) * usdtoThb).toFixed(2)}T
                   </p>
                 </div>
                 <div>
@@ -205,9 +194,7 @@ export default function BtcPage() {
                   </p>
                   <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
                     ฿
-                    {(
-                      bitcoin.market_data.high_24h.usd * usdToThb
-                    ).toLocaleString(undefined, {
+                    {(bitcoin.high_24h * usdtoThb).toLocaleString(undefined, {
                       maximumFractionDigits: 0,
                     })}
                   </p>
@@ -218,9 +205,7 @@ export default function BtcPage() {
                   </p>
                   <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
                     ฿
-                    {(
-                      bitcoin.market_data.low_24h.usd * usdToThb
-                    ).toLocaleString(undefined, {
+                    {(bitcoin.low_24h * usdtoThb).toLocaleString(undefined, {
                       maximumFractionDigits: 0,
                     })}
                   </p>
@@ -230,12 +215,7 @@ export default function BtcPage() {
                     24h Volume
                   </p>
                   <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                    ฿
-                    {(
-                      (bitcoin.market_data.total_volume.usd / 1e12) *
-                      usdToThb
-                    ).toFixed(2)}
-                    T
+                    ฿{((bitcoin.total_volume / 1e12) * usdtoThb).toFixed(2)}T
                   </p>
                 </div>
               </>
@@ -286,20 +266,22 @@ export default function BtcPage() {
               </div>
             </div>
 
-            {/* พื้นที่แสดงกราฟสีชมพูเรืองแสง */}
-            <div className="h-72 w-full flex items-center justify-center relative bg-gradient-to-b from-pink-500/[0.02] to-transparent rounded-xl border border-zinc-900/40">
-              <div className="text-zinc-600 text-xs font-[Orbitron] tracking-widest text-center">
-                📈 [ Interactive Neon Pink Line Chart Area ]
-                <p className="text-[10px] text-zinc-700 mt-1">
-                  สีกราฟจะเรืองแสงสีชมพูเฉดเดียวกับในภาพหน้าแคมเปญ
-                </p>
-              </div>
+            {/* พื้นที่สำหรับแสดงชาร์ตดึงจากโมดูลนอก (Clean & Professional) */}
+            <div className="min-h-[450px] w-full relative bg-gradient-to-b from-pink-500/[0.01] to-transparent rounded-xl border border-zinc-900/40 p-2">
+              {bitcoin ? (
+                <BtcChart
+                  currentPrice={bitcoin.current_price}
+                  usdtoThb={usdtoThb}
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-zinc-600 text-xs font-[Orbitron] tracking-widest animate-pulse">
+                  LOADING REALTIME CHART...
+                </div>
+              )}
+
               {bitcoin && (
-                <div className="absolute right-4 top-1/2 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron]">
-                  ฿
-                  {(
-                    bitcoin.market_data.current_price.usd * usdToThb
-                  ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                <div className="absolute right-4 top-4 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron] backdrop-blur-md">
+                  LIVE
                 </div>
               )}
             </div>
@@ -310,7 +292,7 @@ export default function BtcPage() {
                 {
                   label: "24h",
                   val: bitcoin
-                    ? `${bitcoin.market_data.price_change_percentage_24h.toFixed(2)}%`
+                    ? `${bitcoin.price_change_percentage_24h.toFixed(2)}%`
                     : "--",
                 },
                 { label: "7d", val: "+8.12%" },
@@ -359,11 +341,10 @@ export default function BtcPage() {
                   </span>
                   <span className="text-xs font-bold font-sans text-pink-400">
                     {bitcoin
-                      ? (
-                          bitcoin.market_data.current_price.usd * usdToThb
-                        ).toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                        })
+                      ? (bitcoin.current_price * usdtoThb).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2 },
+                        )
                       : "0.00"}
                   </span>
                 </div>
@@ -371,7 +352,7 @@ export default function BtcPage() {
               <p className="text-[9px] text-zinc-600 text-center font-[Orbitron]">
                 1 BTC ={" "}
                 {bitcoin
-                  ? `฿${(bitcoin.market_data.current_price.usd * usdToThb).toLocaleString()}`
+                  ? `฿${(bitcoin.current_price * usdtoThb).toLocaleString()}`
                   : "--"}{" "}
                 THB
               </p>
@@ -386,7 +367,7 @@ export default function BtcPage() {
                 {
                   name: "Market Cap",
                   val: bitcoin
-                    ? `฿${((bitcoin.market_data.market_cap.usd / 1e12) * usdToThb).toFixed(2)}T`
+                    ? `฿${((bitcoin.market_cap / 1e12) * usdtoThb).toFixed(2)}T`
                     : "--",
                 },
                 {
@@ -397,42 +378,38 @@ export default function BtcPage() {
                 {
                   name: "Circulating Supply",
                   val: bitcoin
-                    ? `${(bitcoin.market_data.circulating_supply / 1e6).toFixed(2)}M BTC`
+                    ? `${(bitcoin.circulating_supply / 1e6).toFixed(2)}M BTC`
                     : "--",
                 },
                 {
                   name: "Total Supply",
                   val: bitcoin
-                    ? `${(bitcoin.market_data.total_supply / 1e6).toFixed(2)}M BTC`
+                    ? `${(bitcoin.total_supply / 1e6).toFixed(2)}M BTC`
                     : "--",
                 },
                 {
                   name: "Max Supply",
                   val: bitcoin
-                    ? `${(bitcoin.market_data.max_supply / 1e6).toFixed(2)}M BTC`
+                    ? `${(bitcoin.max_supply / 1e6).toFixed(2)}M BTC`
                     : "--",
                 },
                 { name: "Market Dominance", val: "52.34%" },
                 {
                   name: "All Time High",
                   val: bitcoin
-                    ? `฿${(bitcoin.market_data.ath.usd * usdToThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                    ? `฿${(bitcoin.ath * usdtoThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                     : "--",
                   sub: bitcoin
-                    ? new Date(
-                        bitcoin.market_data.ath_date.usd,
-                      ).toLocaleDateString()
+                    ? new Date(bitcoin.ath_date).toLocaleDateString()
                     : "--",
                 },
                 {
                   name: "All Time Low",
                   val: bitcoin
-                    ? `฿${(bitcoin.market_data.atl.usd * usdToThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                    ? `฿${(bitcoin.atl * usdtoThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                     : "--",
                   sub: bitcoin
-                    ? new Date(
-                        bitcoin.market_data.atl_date.usd,
-                      ).toLocaleDateString()
+                    ? new Date(bitcoin.atl_date).toLocaleDateString()
                     : "--",
                 },
               ].map((row, i) => (
