@@ -71,7 +71,7 @@ export default function FirstPage() {
               to="/Calculator"
               className="px-8 py-4 rounded-2xl border border-white text-center text-xl bg-transparent text-white hover:text-black hover:bg-white transition duration-300"
             >
-              Open Inflation Calculator
+              Quick Inflation Calculator
             </Link>
             <Link
               to="/coinlist"

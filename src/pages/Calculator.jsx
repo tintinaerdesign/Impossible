@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   Chart as ChartJS,
@@ -36,6 +36,7 @@ export default function Calculator() {
     useState("the future");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const dropdownRef = useRef(null);
 
   const btcDataValues = [
     65, 59, 80, 81, 56, 55, 40, 50, 60, 75, 90, 85, 95, 110,
@@ -176,6 +177,27 @@ export default function Calculator() {
   }, []);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      // เช็กว่าจุดที่คลิก ไม่ได้อยู่ในกล่อง Dropdown (เลือกปี)
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+
+      // 💡 ปิดเมนูมือถือก็ต่อเมื่อ: จุดที่คลิก "ไม่ใช่" ปุ่มแฮมเบอร์เกอร์/เมนูมือถือ
+      // โดยเช็กจาก คลาส หรือ attribute (วิธีนี้ปลอดภัยที่สุด ไม่ต้องพึ่ง stopPropagation)
+      if (!event.target.closest(".mobile-menu-container")) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -193,7 +215,9 @@ export default function Calculator() {
       observer.observe(el);
     });
 
-    return () => observer.disconnect();
+    return () => {
+      if (observer) observer.disconnect(); // ล้าง observer
+    };
   }, []);
 
   return (
@@ -207,7 +231,10 @@ export default function Calculator() {
         }`}
       >
         {/* 💡 ใช้ Grid 3 คอลัมน์ขนาดเท่ากัน เพื่อบังคับให้ส่วนผสมตรงกลางอยู่กึ่งกลางกล่องเสมอโดยไม่ใช้ Absolute */}
-        <div className="w-full grid grid-cols-2 md:grid-cols-3 items-center relative">
+        <div
+          ref={dropdownRef}
+          className="w-full grid grid-cols-2 md:grid-cols-3 items-center relative"
+        >
           {/* [1] ฝั่งซ้าย: Logo */}
           <div className="flex justify-start">
             <span
@@ -268,9 +295,12 @@ export default function Calculator() {
           </div>
 
           {/* [3] ฝั่งขวา: ปุ่ม Toggle บนมือถือ หรือพื้นที่ว่างบนคอมฯ */}
-          <div className="flex justify-end items-center">
+          <div className="flex justify-end items-center mobile-menu-container">
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              }}
               type="button"
               className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none flex items-center justify-center"
             >
@@ -283,7 +313,7 @@ export default function Calculator() {
 
         {/* ==================== DROPDOWN MENU สำหรับ MOBILE ==================== */}
         <div
-          className={`absolute left-0 w-full bg-[#0f0f0f]/95 backdrop-blur-lg border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out ${
+          className={`absolute right-0 w-full mobile-menu-container bg-[#0f0f0f]/95 backdrop-blur-lg border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out ${
             isScrolled ? "top-14 rounded-b-2xl" : "top-20"
           } ${
             isMobileMenuOpen
@@ -368,16 +398,18 @@ export default function Calculator() {
                 <label className="block text-sm font-medium text-gray-400">
                   Monthly Saving (USD)
                 </label>
-                <div className="w-full bg-[#1a1a1c] border border-white/10 rounded-xl py-3 px-4 flex justify-between items-center">
-                  <span className="text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={monthlySaving}
-                    onChange={(e) =>
-                      setMonthlySaving(Number(e.target.value) || 0)
-                    }
-                    className="bg-transparent border-none outline-none focus:ring-0 w-full ml-4 text-white text-right font-mono"
-                  />
+                <div className="w-full bg-[#1a1a1c] border border-white/10 rounded-xl flex items-center relative h-12">
+                  <span className="absolute left-4 py-2 text-gray-500 ">$</span>
+                  <div className="w-full px-4">
+                    <input
+                      type="number"
+                      value={monthlySaving}
+                      onChange={(e) =>
+                        setMonthlySaving(Number(e.target.value) || 0)
+                      }
+                      className="w-full text-end bg-transparent border-none outline-none focus:ring-0 text-gray-200"
+                    />
+                  </div>
                 </div>
                 <input
                   type="range"
@@ -390,11 +422,12 @@ export default function Calculator() {
               </div>
 
               {/* Saving period Dropdown */}
+
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-400">
                   Saving period
                 </label>
-                <div className="relative w-full">
+                <div className="relative w-full" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     type="button"
@@ -410,7 +443,7 @@ export default function Calculator() {
                   </button>
 
                   {isDropdownOpen && (
-                    <ul className="absolute left-0 w-full mt-2 bg-[#1a1a1c] border border-white/10 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
+                    <ul className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-all duration-300 ease-in-out absolute left-0 w-full mt-2 bg-[#1a1a1c] border border-white/10 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
                       {[
                         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
                         17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
@@ -553,7 +586,7 @@ export default function Calculator() {
               </div>
 
               <div className="bg-gradient-to-br from-white/5 to-transparent p-5 md:p-6 rounded-2xl border border-white/10 relative overflow-hidden group hover:border-pink-500/30 transition-all duration-300">
-                <div className="text-zinc-400 text-lgnav">
+                <div className="text-zinc-400 text-lg">
                   In{" "}
                   <span className="text-zinc-400 text-lg">
                     {savingPeriod} {savingPeriod === 1 ? "Year" : "Years"}
@@ -588,7 +621,7 @@ export default function Calculator() {
             </div>
 
             {/* Inflation Chart Area */}
-            <div className="lg:col-span-8 space-y-4">
+            <div className="lg:col-span-8 space-y-4 ">
               <h3 className="text-sm font-medium text-zinc-400">
                 Purchasing Power Over Time (%)
               </h3>
@@ -597,8 +630,8 @@ export default function Calculator() {
               </div>
 
               {/* Interactive Table Grid */}
-              <div className="bg-zinc-900/40 rounded-xl overflow-x-auto border border-white/5 p-4 custom-scrollbar">
-                <table className="w-full text-left text-xs font-mono min-w-[500px]">
+              <div className="bg-zinc-900/40 rounded-xl overflow-x-auto border border-white/5 p-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <table className="w-full text-left text-xs font-mono min-w-[500px] ">
                   <thead>
                     <tr className="text-gray-500 border-b border-white/5">
                       <th className="pb-2 font-medium font-sans">Timeline</th>
@@ -624,7 +657,7 @@ export default function Calculator() {
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="text-gray-300">
+                  <tbody className="text-gray-300 ">
                     <tr>
                       <td className="py-3 text-zinc-500 font-sans">Power</td>
                       <td>100%</td>
@@ -644,7 +677,7 @@ export default function Calculator() {
 
       {/* Real-time Crypto Price Widget Section */}
       <section
-        className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6"
+        className="scroll-animate transition-all duration-700 ease-out   scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6"
         id="price-widget"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[450px]">
