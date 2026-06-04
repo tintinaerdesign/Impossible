@@ -181,7 +181,7 @@ const App = () => {
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-6 py-16 relative z-10">
+      <div className="max-w-5xl mt-20 mx-auto px-6 py-16 relative z-10">
         <h1 className="text-2xl tracking-[2px] font-semibold text-gray-400 uppercase mb-8">
           <span className="text-5xl text-[#e65c8c] font-light">C</span>rypto
           currencies market

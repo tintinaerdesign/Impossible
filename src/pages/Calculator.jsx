@@ -260,6 +260,14 @@ export default function Calculator() {
           <div className="hidden md:flex justify-center items-center">
             <ul className="flex items-center gap-6 lg:gap-8 text-[14px] lg:text-[15px] font-medium whitespace-nowrap">
               <li>
+                <Link
+                  to="/"
+                  className="hover:text-white text-gray-400 transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
                 <a
                   href="#calculator"
                   className="hover:text-white text-gray-400 transition-colors"
@@ -322,6 +330,14 @@ export default function Calculator() {
           }`}
         >
           <ul className="flex flex-col p-6 space-y-4 text-base font-medium">
+            <li>
+              <Link
+                to="/"
+                className="hover:text-white text-gray-400 transition-colors"
+              >
+                Home
+              </Link>
+            </li>
             <li>
               <a
                 href="#calculator"
@@ -398,18 +414,19 @@ export default function Calculator() {
                 <label className="block text-sm font-medium text-gray-400">
                   Monthly Saving (USD)
                 </label>
-                <div className="w-full bg-[#1a1a1c] border border-white/10 rounded-xl flex items-center relative h-12">
-                  <span className="absolute left-4 py-2 text-gray-500 ">$</span>
-                  <div className="w-full px-4">
+                <div className="w-full bg-[#1a1a1c] border border-white/10 rounded-xl flex items-center justify-between relative h-12">
+                  <span className="relative left-4 py-2 text-gray-500 ">$</span>
+                  <div className="relative ml-4 w-full px-4">
                     <input
                       type="number"
                       value={monthlySaving}
                       onChange={(e) =>
                         setMonthlySaving(Number(e.target.value) || 0)
                       }
-                      className="w-full text-end bg-transparent border-none outline-none focus:ring-0 text-gray-200"
+                      className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full text-start bg-transparent border-none outline-none focus:ring-0 text-gray-200"
                     />
                   </div>
+                  <span className="text-gray-400 text-sm pr-4">USD</span>
                 </div>
                 <input
                   type="range"
@@ -677,10 +694,10 @@ export default function Calculator() {
 
       {/* Real-time Crypto Price Widget Section */}
       <section
-        className="scroll-animate transition-all duration-700 ease-out   scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6"
+        className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 max-w-5xl mx-auto py-12 px-4 md:px-6 flex justify-between"
         id="price-widget"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[450px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
           {/* ฝั่งซ้าย: เนื้อหาข้อความและปุ่ม */}
           <div className="space-y-6 text-left order-1">
             <h2 className="text-5xl sm:text-5xl lg:text-5xl xl:text-6xl font-normal tracking-tight leading-[1.2] text-white">
@@ -703,7 +720,11 @@ export default function Calculator() {
           </div>
 
           {/* ฝั่งขวา: Live Crypto Card */}
-          <div className="bg-[#121214] w-full mx-auto md:mx-w-[400px] border border-white/5 rounded-3xl p-6 shadow-2xl group hover:border-pink-500/30 transition-all duration-300 order-2">
+
+          <Link
+            to="/BtcPage"
+            className="block text-left bg-[#121214] w-full mx-auto md:max-w-[400px] border border-white/5 rounded-3xl p-6 shadow-2xl group hover:border-pink-500/30 transition-all duration-300 order-2 cursor-pointer hover:scale-[1.01]"
+          >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl md:text-3xl text-gray-200 font-mono">
                 BTC/USDT
@@ -745,10 +766,17 @@ export default function Calculator() {
               />
             </div>
 
-            <div className="flex bg-[#1a1a1c] border border-white/5 rounded-xl p-1 justify-between text-[10px] text-gray-400 font-medium font-mono">
+            {/* Timeframe Buttons Container */}
+            <div className="flex bg-[#1a1a1c] border border-white/5 rounded-xl p-1 justify-between text-[10px] text-gray-400 font-medium font-mono relative z-10">
               {["1H", "24H", "7D", "1M", "1Y", "ALL"].map((tf) => (
                 <button
                   key={tf}
+                  onClick={(e) => {
+                    // 💡 สกัดสัญญาณไม่ให้วิ่งทะลุไปหาตัว Link แม่
+                    e.stopPropagation();
+                    console.log(`เปลี่ยนช่วงเวลาเป็น: ${tf}`);
+                    // คุณสามารถนำฟังก์ชันเปลี่ยนช่วงเวลามาสั่งรันต่อจากตรงนี้ได้เลยครับ
+                  }}
                   className={`px-2 md:px-2.5 py-1 rounded-lg transition-all ${
                     tf === "24H"
                       ? "bg-[#ff1e67]/15 text-[#ff1e67] font-bold"
@@ -759,7 +787,7 @@ export default function Calculator() {
                 </button>
               ))}
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 
