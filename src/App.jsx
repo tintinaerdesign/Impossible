@@ -3,6 +3,7 @@ import FirstPage from "./pages/FirstPage";
 import Calculator from "./pages/Calculator";
 import CoinList from "./pages/coinlist";
 import BtcPage from "./pages/BtcPage";
+import Practice from "./pages/Practice";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Route path="/Calculator" element={<Calculator />} />
       <Route path="/coinlist" element={<CoinList />} />
       <Route path="/BtcPage" element={<BtcPage />} />
+      <Route path="/Practice" element={<Practice />} />
     </Routes>
   );
 }

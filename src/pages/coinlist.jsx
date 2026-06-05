@@ -144,13 +144,12 @@ const App = () => {
 
         {/* ==================== DROPDOWN MENU สำหรับ MOBILE ==================== */}
         <div
-          className={`absolute right-0 w-full mobile-menu-container bg-[#0f0f0f]/95 backdrop-blur-lg border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out ${
-            isScrolled ? "top-14 rounded-b-2xl" : "top-20"
-          } ${
-            isMobileMenuOpen
-              ? "opacity-100 translate-y-0 pointer-events-auto"
-              : "opacity-0 -translate-y-4 pointer-events-none"
-          }`}
+          className={`absolute right-0 w-full mobile-menu-container bg-[#1a1a1c]/95 backdrop-blur-2xl border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out 
+            ${isScrolled ? "top-14 rounded-b-2xl" : "top-20"} ${
+              isMobileMenuOpen
+                ? "opacity-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 -translate-y-4 pointer-events-none"
+            }`}
         >
           <ul className="flex flex-col p-6 space-y-4 text-base font-medium">
             <li>
@@ -220,44 +219,60 @@ const App = () => {
                   </td>
                 </tr>
               ) : (
-                coins.map((coin) => (
-                  <tr className="border-b border-white/5 hover:bg-white/[0.03] transition-all duration-200">
-                    <td className="px-6 py-4 text-left text-sm text-gray-500">
-                      {coin.market_cap_rank}
-                    </td>
-                    <td className="px-6 py-4 text-left">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={coin.image}
-                          className="w-6 h-6 object-contain"
-                          alt={coin.name}
-                        />
-                        <span className="font-medium text-gray-200">
-                          {coin.name}
-                        </span>
-                        <span className="text-xs text-gray-500 font-mono uppercase">
-                          {coin.symbol}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-left font-mono font-semibold text-gray-100">
-                      ${coin.current_price.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 text-left text-sm font-mono text-gray-400">
-                      ${coin.market_cap.toLocaleString()}
-                    </td>
-                    <td
-                      className={`px-6 py-4 text-left font-mono font-medium text-sm ${
-                        coin.price_change_percentage_24h >= 0
-                          ? "text-emerald-400"
-                          : "text-rose-400"
-                      }`}
+                coins.map((coin) => {
+                  if (coin.price_change_percentage_24h === null) {
+                    console.log("FOUND NULL:", coin);
+                  }
+
+                  return (
+                    <tr
+                      key={coin.id}
+                      className="border-b border-white/5 hover:bg-white/[0.03] transition-all duration-200"
                     >
-                      {coin.price_change_percentage_24h >= 0 ? "▲ +" : "▼ "}
-                      {coin.price_change_percentage_24h.toFixed(2)}%
-                    </td>
-                  </tr>
-                ))
+                      <td className="px-6 py-4 text-left text-sm text-gray-500">
+                        {coin.market_cap_rank}
+                      </td>
+
+                      <td className="px-6 py-4 text-left">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={coin.image}
+                            className="w-6 h-6 object-contain"
+                            alt={coin.name}
+                          />
+
+                          <span className="font-medium text-gray-200">
+                            {coin.name}
+                          </span>
+
+                          <span className="text-xs text-gray-500 font-mono uppercase">
+                            {coin.symbol}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 text-left font-mono font-semibold text-gray-100">
+                        ${coin.current_price.toLocaleString()}
+                      </td>
+
+                      <td className="px-6 py-4 text-left text-sm font-mono text-gray-400">
+                        ${coin.market_cap.toLocaleString()}
+                      </td>
+
+                      <td
+                        className={`px-6 py-4 text-left font-mono font-medium text-sm ${
+                          coin.price_change_percentage_24h != null &&
+                          coin.price_change_percentage_24h >= 0
+                            ? "text-emerald-400"
+                            : "text-rose-400"
+                        }`}
+                      >
+                        {coin.price_change_percentage_24h >= 0 ? "▲ +" : "▼ "}
+                        {coin.price_change_percentage_24h?.toFixed(2) ?? "N/A"}%
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
