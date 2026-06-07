@@ -15,6 +15,7 @@ export default function FirstPage() {
 
   // ระบบคำนวณทางคณิตศาสตร์แปรผันตามอินพุตแบบเรียลไทม์
   const principal = monthlySaving * 12 * savingPeriod;
+
   // ระบบ saving Period
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -31,7 +32,8 @@ export default function FirstPage() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
+    {
+    }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -49,15 +51,16 @@ export default function FirstPage() {
     }, 300); // รอ fade out ก่อนเปลี่ยน step
   };
 
-  let fvResult = 0;
+  let fvResult = Number(principal) || 0;
   if (btcGrowth > 0) {
     const monthlyRate = btcGrowth / 100 / 12;
     const totalMonths = savingPeriod * 12;
-    fvResult =
+
+    const calculatedValue =
       (monthlySaving * (Math.pow(1 + monthlyRate, totalMonths) - 1)) /
       monthlyRate;
-  } else {
-    fvResult = principal;
+
+    fvResult = isFinite(calculatedValue) ? calculatedValue : principal;
   }
 
   const fiatDilutionRate = 0.07;
@@ -315,7 +318,7 @@ export default function FirstPage() {
                   </div>
                   <button
                     onClick={handleNextStep}
-                    className="w-full mt-14 py-3 bg-gradient-to-r from-[#ec0065] to-[#f2a900] rounded-full hover:scale-[1.02] transition-all duration-300"
+                    className="w-full mt-14 py-3 bg-gradient-to-r from-[#ec0065] to-[#f2a900] rounded-2xl hover:scale-[1.02] transition-all duration-300"
                   >
                     Next Step
                   </button>
@@ -376,7 +379,7 @@ export default function FirstPage() {
                       </button>
 
                       {isDropdownOpen && (
-                        <ul className="absolute left-0 w-full mt-2 bg-[#1a1a1c] border border-white/10 rounded-xl z-50 max-h-48 overflow-y-auto">
+                        <ul className="absolute overflow-auto max-h-60 left-0 w-full mt-2 bg-[#1a1a1c] border border-white/10 rounded-xl z-50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                           {[...Array(40)].map((_, i) => (
                             <li
                               key={i + 1}
@@ -406,14 +409,14 @@ export default function FirstPage() {
                   <div className="flex gap-4 mt-14">
                     <button
                       onClick={() => setCurrentStep(1)}
-                      className="w-full border border-white/10 rounded-full py-3 hover:scale-[1.02] transition-all duration-300"
+                      className="w-full border border-white/10 rounded-2xl py-3 hover:scale-[1.02] transition-all duration-300"
                     >
                       Back
                     </button>
 
                     <button
                       onClick={handleNextStep}
-                      className="w-full py-3 bg-gradient-to-r from-[#ec0065] to-[#f2a900] rounded-full hover:scale-[1.02] transition-all duration-300"
+                      className="w-full py-3 bg-gradient-to-r from-[#ec0065] to-[#f2a900] rounded-2xl hover:scale-[1.02] transition-all duration-300"
                     >
                       Next Step
                     </button>
@@ -421,8 +424,181 @@ export default function FirstPage() {
                 </div>
               </div>
             )}
+
+            {/* Step 3*/}
+            {currentStep === 3 && (
+              <div className="col-span-4 bg-[#1a1a1c] rounded-3xl shadow-2xl border border-white/5 p-6 space-y-5">
+                <div className="flex items-start gap-4">
+                  <div className="bg-gradient-to-r from-[#ec0065] whitespace-nowrap to-[#f2a900] text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                    STEP 3
+                  </div>
+                  <div className="whitespace-nowrap">
+                    <h3 className="text-xl text-zinc-100">
+                      Expected Annual Growth
+                    </h3>
+
+                    <p className="text-sm text-zinc-500">
+                      Set your expected annual return assumption..
+                    </p>
+                  </div>
+                </div>
+                <div className="h-[1px] border border-white/10 w-full mt-3"></div>
+
+                <div className="bg-[#151414] rounded-2xl border border-white/5 space-y-4 p-5">
+                  <div className="mt-3 w-full bg-[#151414] border border-white/10 rounded-xl flex items-center justify-between h-12 px-4 opacity-70">
+                    <span className="text-gray-500">$</span>
+
+                    <input
+                      readOnly
+                      value={monthlySaving}
+                      className="w-full ml-4 bg-transparent outline-none text-zinc-400 pointer-events-none"
+                    />
+
+                    <span className="text-gray-500">USD</span>
+                  </div>
+
+                  <button
+                    readOnly
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full flex items-center justify-between bg-[#151514] border border-white/10 rounded-xl px-4 py-3 text-zinc-400 opacity-70"
+                  >
+                    <span>{savingPeriod} years</span>
+                  </button>
+
+                  <div className="w-full bg-[#1a1a1c] border border-white/10 rounded-xl py-2.5 px-4 flex justify-between items-center">
+                    <span className="text-xs text-gray-400 flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm">
+                        trending_up
+                      </span>
+                      Growth Rate
+                    </span>
+                    <span className="text-zinc-200 font-mono font-semibold">
+                      {btcGrowth.toFixed(2)}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="120"
+                    value={btcGrowth}
+                    onChange={(e) => setBtcGrowth(Number(e.target.value))}
+                    className="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer accent-[#ec0065]"
+                  />
+                  <div className="flex items-center gap-2 px-1 select-none">
+                    <span className="text-xl text-amber-500 animate-pulse">
+                      ✨
+                    </span>
+
+                    <p className="text-md font-light text-zinc-500 tracking-wide">
+                      Adjust the percentage using the slider.
+                    </p>
+                  </div>
+                  <div className="flex gap-4 mt-6">
+                    <button
+                      onClick={() => setCurrentStep(2)}
+                      className="w-full border border-white/10 rounded-2xl py-3 hover:scale-[1.02] transition-all duration-300"
+                    >
+                      Back
+                    </button>
+
+                    <button
+                      onClick={handleNextStep}
+                      className="w-full py-3 bg-gradient-to-r from-[#ec0065] to-[#f2a900] rounded-2xl hover:scale-[1.02] transition-all duration-300"
+                    >
+                      Next Step
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div className="col-span-4 bg-[#1a1a1c] rounded-3xl shadow-2xl border border-white/5 p-6 space-y-5">
+                <div className="flex items-start gap-4">
+                  <div className="bg-gradient-to-r from-[#ec0065] whitespace-nowrap to-[#f2a900] text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                    Result
+                  </div>
+                  <div className="whitespace-nowrap">
+                    <h3 className="text-xl text-zinc-100">
+                      Future Value (Est.)
+                    </h3>
+
+                    <p className="text-sm text-zinc-500">
+                      Let's see the power of componding of assets .
+                    </p>
+                  </div>
+                </div>
+                <div className="h-[1px] border border-white/10 w-full mt-3"></div>
+
+                <div className="w-full bg-[#151414] border border-white/10 rounded-xl p-4">
+                  <div className="flex flex-col items-center justify-center">
+                    <p className="bg-gradient-to-r from-[#f2a900] to-[#ec398f] bg-clip-text text-transparent text-5xl font-semibold">
+                      {(Number(fvResult) || 0).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 justify-between mt-3">
+                    <div className="flex items-center justify-center">
+                      <div className="pl-4 rounded-xl text-pink-500 text-lg flex flex-cols-2 items-center">
+                        <span className="material-symbols-outlined">
+                          account_balance
+                        </span>
+                      </div>
+                      <div className="text-[11px] pl-2 items-start whitespace-nowrap uppercase text-gray-500 font-medium">
+                        Total Investment
+                        <div className="text-lg text-white">
+                          $
+                          {principal.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid justify-center">
+                      <p className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+                        Saving Period
+                      </p>
+                      <span className="text-lg text-white">
+                        {savingPeriod} Years
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-1 select-none">
+                  <span className="text-xl text-amber-500 animate-pulse">
+                    ✨
+                  </span>
+
+                  <p className="text-md font-light text-zinc-500 tracking-wide">
+                    The real purchasing power may decrease with inflation.
+                  </p>
+                </div>
+
+                <div className="flex gap-4 mt-14">
+                  <button
+                    onClick={() => setCurrentStep(3)}
+                    className="w-full border border-white/10 rounded-2xl py-3 hover:scale-[1.02] transition-all duration-300"
+                  >
+                    Back
+                  </button>
+
+                  <button
+                    onClick={handleNextStep}
+                    className="w-full py-3 bg-gradient-to-r from-[#4a183e] via-[#5f1c50] to-[#7a245d] border shadow-[0_0_20px_rgba(236,0,101,0.12)] rounded-2xl hover:scale-[1.02] transition-all duration-300"
+                  >
+                    See Full Deatils
+                  </button>
+                </div>
+                <div className="h-[1px] w-full border-white/10 mt-3"></div>
+              </div>
+            )}
           </div>
         </div>
+
         {/* === ฝั่งซ้ายเดิม: เนื้อหาข้อความพาดหัว (กินพื้นที่ 5 ช่องหลังบนจอใหญ่) === */}
         <div className="lg:col-span-5 flex flex-col space-y-6">
           <h1 className="font-['Orbitron'] text-4xl md:text-5xl font-black leading-[1.2] tracking-tight text-left">
