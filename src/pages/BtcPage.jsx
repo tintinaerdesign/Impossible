@@ -20,21 +20,10 @@ export default function BtcPage() {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState("1D");
-  const [usdtoThb, setUsdToThb] = useState(35.0); // เริ่มต้นด้วยค่าโดยประมาณก่อน
 
-  // 🌟 ฟังก์ชันที่ 1: แยกสำหรับดึงอัตราแลกเปลี่ยน USD/THB โดยเฉพาะ
-  const fetchUsdThb = async () => {
-    try {
-      const fxResponse = await fetch("https://open.er-api.com/v6/latest/USD");
-      const fxData = await fxResponse.json();
-      console.log("FX Data:", fxData);
-      if (fxData && fxData.rates && fxData.rates.THB) {
-        setUsdToThb(fxData.rates.THB);
-      }
-    } catch (error) {
-      console.error("Error fetching USD/THB:", error);
-    }
-  };
+  const [rsiData, setRsiData] = useState([]);
+
+  const [bullishDivergence, setBullishDivergence] = useState(false);
 
   // 🌟 ฟังก์ชันที่ 2: แยกสำหรับดึงข้อมูลคริปโตโดยเฉพาะ
   const fetchCryptoData = async () => {
@@ -54,13 +43,39 @@ export default function BtcPage() {
   useEffect(() => {
     const loadAllData = async () => {
       setLoading(true);
-      await Promise.all([fetchUsdThb(), fetchCryptoData()]);
+      await Promise.all([fetchCryptoData()]);
       setLoading(false);
     };
 
     loadAllData();
   }, []);
 
+  const detectBullishDivergence = (candles, rsiData) => {
+    if (candles.length < 20 || rsiData.length < 20) {
+      return false;
+    }
+
+    // หา low ล่าสุด 2 จุด
+    const recentCandles = candles.slice(-20);
+
+    const lows = recentCandles.map((c) => c.low);
+
+    const firstLow = Math.min(...lows.slice(0, 10));
+
+    const secondLow = Math.min(...lows.slice(10));
+
+    const firstLowIndex = lows.indexOf(firstLow);
+
+    const secondLowIndex = lows.lastIndexOf(secondLow);
+
+    const firstRsi = rsiData[firstLowIndex]?.value;
+
+    const secondRsi = rsiData[secondLowIndex]?.value;
+
+    const bullish = secondLow < firstLow && secondRsi > firstRsi;
+
+    return bullish;
+  };
   return (
     <div className="min-h-screen bg-black text-white flex font-lexend">
       {/* ======================================================== */}
@@ -95,7 +110,7 @@ export default function BtcPage() {
                 >
                   <IconComponent
                     size={18}
-                    strokeWidth={1.5}
+                    strokeWidth={0.5}
                     className={item.active ? "text-pink-500" : "text-zinc-500"}
                   />
                   {item.name}
@@ -160,14 +175,12 @@ export default function BtcPage() {
                 </div>
 
                 <div className="flex items-baseline gap-3 mt-1">
-                  <span className="text-3xl md:text-4xl text-pink-500 tracking-tight font-[Orbitron]">
-                    ฿
-                    {(bitcoin.current_price * usdtoThb).toLocaleString(
-                      undefined,
-                      {
-                        minimumFractionDigits: 2,
-                      },
-                    )}
+                  <span className="text-3xl md:text-4xl text-pink-500 tracking-tight font-sans">
+                    $
+                    {bitcoin.current_price.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
 
                   <span
@@ -191,7 +204,7 @@ export default function BtcPage() {
                   Market Cap
                 </p>
                 <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                  ฿{((bitcoin.market_cap / 1e12) * usdtoThb).toFixed(2)}T
+                  ${(bitcoin.market_cap / 1e12).toFixed(2)}T
                 </p>
               </div>
 
@@ -200,8 +213,8 @@ export default function BtcPage() {
                   24h High
                 </p>
                 <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                  ฿
-                  {(bitcoin.high_24h * usdtoThb).toLocaleString(undefined, {
+                  $
+                  {bitcoin.high_24h.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}
                 </p>
@@ -212,8 +225,8 @@ export default function BtcPage() {
                   24h Low
                 </p>
                 <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                  ฿
-                  {(bitcoin.low_24h * usdtoThb).toLocaleString(undefined, {
+                  $
+                  {bitcoin.low_24h.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}
                 </p>
@@ -224,7 +237,7 @@ export default function BtcPage() {
                   24h Volume
                 </p>
                 <p className="text-xs font-bold mt-1 text-zinc-300 font-[Orbitron]">
-                  ฿{((bitcoin.total_volume / 1e12) * usdtoThb).toFixed(2)}T
+                  ${(bitcoin.total_volume / 1e12).toFixed(2)}T
                 </p>
               </div>
             </div>
@@ -269,13 +282,18 @@ export default function BtcPage() {
                 ))}
               </div>
             </div>
+            <div className="absolute right-4 top-4 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron] backdrop-blur-md">
+              LIVE
+            </div>
 
             {/* พื้นที่สำหรับแสดงชาร์ตดึงจากโมดูลนอก (Clean & Professional) */}
-            <div className="min-h-[450px] w-full relative bg-gradient-to-b from-pink-500/[0.01] to-transparent rounded-xl border border-zinc-900/40 p-2">
+            <div className="w-full h-[450px] min-h-[450px] relative bg-gradient-to-b from-pink-500/[0.01] to-transparent rounded-xl border border-zinc-900/40 p-2 overflow-hidden">
               {bitcoin ? (
                 <BtcChart
                   currentPrice={bitcoin.current_price}
-                  usdtoThb={usdtoThb}
+                  timeframe={timeframe}
+                  setRsiData={setRsiData}
+                  setBullishDivergence={setBullishDivergence}
                 />
               ) : (
                 <div className="h-full w-full flex items-center justify-center text-zinc-600 text-xs font-[Orbitron] tracking-widest animate-pulse">
@@ -284,10 +302,94 @@ export default function BtcPage() {
               )}
 
               {bitcoin && (
-                <div className="absolute right-4 top-4 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron] backdrop-blur-md">
+                <div className="absolute left-4 top-4 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron] backdrop-blur-md">
                   LIVE
                 </div>
               )}
+            </div>
+            {/* RSI INDICATOR */}
+            <div className="bg-zinc-950/50 border border-zinc-900 rounded-2xl p-4">
+              <div className="flex justify-between items-center mb-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500 font-[Orbitron]">
+                    Relative Strength Index (14)
+                  </p>
+
+                  <p className="text-sm text-zinc-400 mt-1">
+                    Momentum indicator
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-pink-500 font-[Orbitron]">
+                    {rsiData.length
+                      ? rsiData[rsiData.length - 1].value.toFixed(1)
+                      : "--"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative h-[160px]">
+                <svg
+                  className="w-full h-full"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                >
+                  {/* 70 line */}
+                  <line
+                    x1="0"
+                    y1="30"
+                    x2="100"
+                    y2="30"
+                    stroke="#ec4899"
+                    strokeDasharray="4"
+                    opacity="0.3"
+                  />
+
+                  {/* 30 line */}
+                  <line
+                    x1="0"
+                    y1="70"
+                    x2="100"
+                    y2="70"
+                    stroke="#22c55e"
+                    strokeDasharray="4"
+                    opacity="0.3"
+                  />
+
+                  {/* RSI path */}
+                  <polyline
+                    fill="none"
+                    stroke="#ec4899"
+                    strokeWidth="0.2"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    points={
+                      rsiData.length > 1
+                        ? rsiData
+                            .map((d, i) => {
+                              const x =
+                                (i / Math.max(rsiData.length - 1, 1)) * 100;
+
+                              const y = 100 - d.value;
+
+                              return `${x},${y}`;
+                            })
+                            .join(" ")
+                        : ""
+                    }
+                  />
+                </svg>
+
+                {/* labels */}
+                <div className="absolute right-2 top-[18%] text-[10px] text-zinc-500 font-[Orbitron]">
+                  70
+                </div>
+
+                <div className="absolute right-2 top-[58%] text-[10px] text-zinc-500 font-[Orbitron]">
+                  30
+                </div>
+              </div>
             </div>
 
             {/* เปอร์เซ็นต์ผลตอบแทนย้อนหลัง */}
@@ -322,43 +424,42 @@ export default function BtcPage() {
 
           {/* --- ฝั่งขวา: เครื่องมือคำนวณและสถิติตลาดเชิงลึก --- */}
           <div className="space-y-6">
-            {/* 1. วิดเจ็ตตู้แปลงสกุลเงิน */}
-            <div className="bg-zinc-950/60 border border-zinc-900 rounded-3xl p-6 space-y-4">
-              <h3 className="text-xs font-bold text-zinc-400 font-sans tracking-wider uppercase">
-                Bitcoin Converter
+            <div className="bg-zinc-950/60 border border-zinc-900 rounded-3xl p-6">
+              <h3 className="text-xs font-bold text-zinc-400 tracking-wider uppercase mb-5">
+                BTC Market Zone
               </h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between bg-zinc-900/40 p-3 rounded-xl border border-zinc-800/80">
-                  <span className="text-xs font-bold flex items-center gap-2 font-sans">
-                    🪙 BTC
-                  </span>
-                  <input
-                    type="text"
-                    value="1"
-                    readOnly
-                    className="bg-transparent text-right w-20 text-xs font-bold font-sans focus:outline-none text-zinc-300"
-                  />
-                </div>
-                <div className="flex items-center justify-between bg-zinc-900/40 p-3 rounded-xl border border-zinc-800/80">
-                  <span className="text-xs font-bold flex items-center gap-2 font-sans">
-                    🇹🇭 THB
-                  </span>
-                  <span className="text-xs font-bold font-sans text-pink-400">
-                    {bitcoin
-                      ? (bitcoin.current_price * usdtoThb).toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2 },
-                        )
-                      : "0.00"}
+
+              <div className="text-center">
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-2">
+                  Current Market Position
+                </p>
+
+                <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-full">
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse" />
+
+                  <span className="text-yellow-400 font-semibold">
+                    Healthy Pullback
                   </span>
                 </div>
               </div>
-              <p className="text-[9px] text-zinc-600 text-center font-[Orbitron]">
-                1 BTC ={" "}
-                {bitcoin
-                  ? `฿${(bitcoin.current_price * usdtoThb).toLocaleString()}`
-                  : "--"}{" "}
-                THB
+
+              {/* visual zone */}
+              <div className="mt-6">
+                <div className="flex justify-between text-[10px] text-zinc-500 mb-2">
+                  <span>Deep Pullback</span>
+                  <span>Overheated</span>
+                </div>
+
+                <div className="relative h-3 rounded-full bg-zinc-900 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-yellow-500 to-pink-500" />
+
+                  <div className="absolute left-[55%] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-4 border-black" />
+                </div>
+              </div>
+
+              <p className="text-[11px] text-zinc-500 text-center mt-4 leading-relaxed">
+                Based on historical Fibonacci retracement behavior. Educational
+                reference only.
               </p>
             </div>
 
@@ -371,7 +472,7 @@ export default function BtcPage() {
                 {
                   name: "Market Cap",
                   val: bitcoin
-                    ? `฿${((bitcoin.market_cap / 1e12) * usdtoThb).toFixed(2)}T`
+                    ? `$${(bitcoin.market_cap / 1e12).toFixed(2)}T`
                     : "--",
                 },
                 {
@@ -387,13 +488,13 @@ export default function BtcPage() {
                 },
                 {
                   name: "Total Supply",
-                  val: bitcoin
+                  val: bitcoin?.total_supply
                     ? `${(bitcoin.total_supply / 1e6).toFixed(2)}M BTC`
                     : "--",
                 },
                 {
                   name: "Max Supply",
-                  val: bitcoin
+                  val: bitcoin?.max_supply
                     ? `${(bitcoin.max_supply / 1e6).toFixed(2)}M BTC`
                     : "--",
                 },
@@ -401,7 +502,9 @@ export default function BtcPage() {
                 {
                   name: "All Time High",
                   val: bitcoin
-                    ? `฿${(bitcoin.ath * usdtoThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                    ? `$${bitcoin.ath.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}`
                     : "--",
                   sub: bitcoin
                     ? new Date(bitcoin.ath_date).toLocaleDateString()
@@ -410,7 +513,9 @@ export default function BtcPage() {
                 {
                   name: "All Time Low",
                   val: bitcoin
-                    ? `฿${(bitcoin.atl * usdtoThb).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                    ? `$${bitcoin.atl.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}`
                     : "--",
                   sub: bitcoin
                     ? new Date(bitcoin.atl_date).toLocaleDateString()
@@ -443,19 +548,29 @@ export default function BtcPage() {
         </div>
 
         {/* ส่วนท้ายสุด: About Box */}
-        <footer className="bg-zinc-950/30 border border-zinc-900 rounded-3xl p-6">
-          <h3 className="text-xs font-bold text-zinc-400 mb-3 font-sans tracking-wider uppercase">
-            About Bitcoin
-          </h3>
-          <p className="text-zinc-400 text-xs leading-relaxed">
-            Bitcoin คือสกุลเงินดิจิทัลแรกของโลกที่ถูกสร้างขึ้นในปี 2009
-            ทำงานบนระบบบล็อกเชน (Blockchain) แบบกระจายศูนย์ ไม่มีตัวกลาง
-            ควบคุมและตรวจสอบความถูกต้องร่วมกันโดยเครือข่ายคอมพิวเตอร์ของผู้ใช้งานทั่วโลก
-            มีจำนวนจำกัดอย่างเข้มงวดอยู่ที่ 21 ล้านเหรียญเท่านั้น
+
+        <footer
+          className={`mt-3 border rounded-xl p-3 ${
+            bullishDivergence
+              ? "bg-emerald-500/10 border-emerald-500/20"
+              : "bg-zinc-950 border-zinc-900"
+          }`}
+        >
+          <p
+            className={`text-xs font-medium ${
+              bullishDivergence ? "text-emerald-400" : "text-zinc-400"
+            }`}
+          >
+            {bullishDivergence
+              ? "Bullish Momentum Divergence Detected"
+              : "No Bullish Divergence Detected"}
           </p>
-          <button className="text-xs text-pink-500 hover:text-pink-400 font-bold mt-4 flex items-center gap-1 transition">
-            Read More →
-          </button>
+
+          <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+            {bullishDivergence
+              ? "Price weakness appears to be slowing while momentum shows relative strength. Educational insight only."
+              : "No notable bullish momentum divergence detected on the selected timeframe."}
+          </p>
         </footer>
       </main>
     </div>

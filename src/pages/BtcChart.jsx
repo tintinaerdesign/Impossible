@@ -1,139 +1,268 @@
-import React, { useState, useEffect } from "react";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import React, { useEffect, useRef } from "react";
 
-export default function BtcChart({ currentPrice, usdtoThb }) {
-  const [chartData, setChartData] = useState([]);
+import { createChart, CandlestickSeries } from "lightweight-charts";
 
-  // สร้างข้อมูลเริ่มต้นสำหรับการจำลองกราฟ 24 ชั่วโมง (1D) ให้ดูสวยงาม
-  useEffect(() => {
-    const basePrice = currentPrice || 65000; // ใช้ราคาปัจจุบันหรือค่าเริ่มต้น
-    const initialData = [];
-    const now = new Date();
+const ranges = {
+  "1D": 1,
+  "7D": 7,
+  "1M": 30,
+  "3M": 90,
+  "1Y": 365,
+  ALL: 365,
+};
 
-    for (let i = 16; i >= 0; i--) {
-      const time = new Date(now.getTime() - i * 60000);
-      // สร้างความผันผวนของราคาเล็กน้อยแบบสมจริงเพื่อให้กราฟมีมิติย้อนหลัง
-      const randomChange = (Math.random() - 0.48) * (basePrice * 0.001); // เปลี่ยนแปลงได้สูงสุด ±2% ของราคา
-      const generatedPrice = (basePrice + randomChange) * usdtoThb;
+export default function BtcChart({
+  currentPrice,
+  timeframe = "1D",
+  setRsiData,
+  setBullishDivergence,
+}) {
+  const chartRef = useRef(null);
 
-      initialData.push({
-        time: time.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        price: generatedPrice,
+  const chartInstance = useRef(null);
+
+  const candleSeriesRef = useRef(null);
+
+  // =========================
+  // RSI CALCULATION
+  // =========================
+  const calculateRSI = (closes, period = 14) => {
+    if (closes.length < period + 1) {
+      return [];
+    }
+
+    const gains = [];
+    const losses = [];
+
+    for (let i = 1; i < closes.length; i++) {
+      const diff = closes[i] - closes[i - 1];
+
+      gains.push(diff > 0 ? diff : 0);
+
+      losses.push(diff < 0 ? -diff : 0);
+    }
+
+    const rsi = [];
+
+    for (let i = period; i < gains.length; i++) {
+      const avgGain =
+        gains.slice(i - period, i).reduce((a, b) => a + b, 0) / period;
+
+      const avgLoss =
+        losses.slice(i - period, i).reduce((a, b) => a + b, 0) / period;
+
+      const rs = avgGain / (avgLoss || 1);
+
+      const value = 100 - 100 / (1 + rs);
+
+      rsi.push({
+        value,
       });
     }
-    setChartData(initialData);
-  }, [currentPrice, usdtoThb]);
 
-  // ระบบดึงข้อมูล/อัปเดตราคาแบบ Realtime ทุกๆ 3 วินาที
-  useEffect(() => {
-    if (!currentPrice) return;
-
-    const interval = setInterval(() => {
-      setChartData((prevData) => {
-        const nextData = [...prevData];
-        // ลบข้อมูลตัวเก่าสุดออกเพื่อไม่ให้กราฟล้นโครงสร้าง
-        if (nextData.length > 80) nextData.shift();
-
-        const now = new Date();
-        // เพิ่มความสมจริงด้วยแรงเหวี่ยงราคาแบบเรียลไทม์ยึดจากราคา API ปัจจุบัน
-        const livePrice =
-          (currentPrice + (Math.random() - 0.5) * (currentPrice * 0.0005)) *
-          usdtoThb;
-
-        return [
-          ...nextData,
-          {
-            time: now.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            price: livePrice,
-          },
-        ];
-      });
-    }, 3000); // อัปเดตทุกๆ 3 วินาที
-
-    return () => clearInterval(interval);
-  }, [currentPrice, usdtoThb]);
-
-  // การตั้งค่าสไตล์ Tooltip ให้เรียบหรูสไตล์ฟินเทคพรีเมียม
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-zinc-950/90 border border-zinc-800 backdrop-blur-md px-3 py-2 rounded-xl shadow-xl shadow-black/50">
-          <p className="text-[10px] text-zinc-500 font-[Orbitron]">
-            {payload[0].payload.time}
-          </p>
-          <p className="text-xs font-bold text-pink-500 font-[Orbitron] mt-0.5">
-            ฿
-            {payload[0].value.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        </div>
-      );
-    }
-    return null;
+    return rsi;
   };
 
-  return (
-    <div className="w-full h-full min-h-[260px] relative">
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={chartData}
-          margin={{ top: 15, right: 5, left: 5, bottom: 0 }}
-        >
-          <defs>
-            {/* พื้นที่สร้างเอฟเฟกต์การไล่เฉดสีชมพูสะท้อนแสง Neon Glow */}
-            <linearGradient id="pinkGlow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ec4899" stopOpacity={0.25} />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity={0.0} />
-            </linearGradient>
-          </defs>
+  // =========================
+  // BULLISH RSI DIVERGENCE
+  // =========================
+  const detectBullishDivergence = (candles, rsiData) => {
+    if (candles.length < 30 || rsiData.length < 30) {
+      return false;
+    }
 
-          {/* แกน X และ Y ซ่อนเส้นแกนทั้งหมดและเลือกแสดงเฉพาะข้อความฟอนต์มินิมอลเพื่อความสะอาดสายตา */}
-          <XAxis
-            dataKey="time"
-            tickLine={false}
-            axisLine={false}
-            stroke="#52525b"
-            style={{ fontSize: "9px", fontFamily: "Orbitron" }}
-            dy={10}
-            interval={Math.floor(chartData.length / 5)}
-          />
-          <YAxis
-            domain={["dataMin - 500", "dataMax + 500"]}
-            hide={true} // ซ่อนราคาด้านข้างเพื่อความลื่นไหลระดับโปรโมเดิร์นแบบ Dashboard ระดับสากล
-          />
+    // หา pivot low
+    const pivotLows = [];
 
-          <Tooltip
-            content={<CustomTooltip />}
-            cursor={{ stroke: "#27272a", strokeWidth: 1 }}
-          />
+    const lookback = 3;
 
-          {/* ตัวเส้นกราฟหลักสีชมพูสะท้อนแสงพร้อมเอฟเฟกต์เติมพื้นที่ใต้กราฟ */}
-          <Area
-            type="monotone"
-            dataKey="price"
-            stroke="#ec4899"
-            strokeWidth={2}
-            fillOpacity={1}
-            fill="url(#pinkGlow)"
-            isAnimationActive={false} // ปิดแอนิเมชันเริ่มต้นเพื่อให้กราฟ Realtime ขยับได้ลื่นไหลไม่สะดุดกระตุกตา
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
-  );
+    for (let i = lookback; i < candles.length - lookback; i++) {
+      const low = candles[i].low;
+
+      let isPivot = true;
+
+      for (let j = 1; j <= lookback; j++) {
+        if (low >= candles[i - j].low || low >= candles[i + j].low) {
+          isPivot = false;
+
+          break;
+        }
+      }
+
+      if (isPivot) {
+        pivotLows.push(i);
+      }
+    }
+
+    // ต้องมี low อย่างน้อย 2 จุด
+    if (pivotLows.length < 2) {
+      return false;
+    }
+
+    // ใช้ low ล่าสุด 2 จุด
+    const prevIndex = pivotLows[pivotLows.length - 2];
+
+    const lastIndex = pivotLows[pivotLows.length - 1];
+
+    const prevPrice = candles[prevIndex].low;
+
+    const lastPrice = candles[lastIndex].low;
+
+    const prevRsi = rsiData[prevIndex - 14]?.value;
+
+    const lastRsi = rsiData[lastIndex - 14]?.value;
+
+    if (!prevRsi || !lastRsi) {
+      return false;
+    }
+
+    // bullish divergence
+    const bullish = lastPrice < prevPrice && lastRsi > prevRsi;
+
+    console.log({
+      prevPrice,
+      lastPrice,
+      prevRsi,
+      lastRsi,
+      bullish,
+    });
+
+    return bullish;
+  };
+
+  // =========================
+  // CREATE CHART
+  // =========================
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    const chart = createChart(chartRef.current, {
+      width: chartRef.current.clientWidth,
+
+      height: 420,
+
+      layout: {
+        background: {
+          color: "transparent",
+        },
+
+        textColor: "#71717a",
+      },
+
+      grid: {
+        vertLines: {
+          color: "rgba(255,255,255,0.03)",
+        },
+
+        horzLines: {
+          color: "rgba(255,255,255,0.03)",
+        },
+      },
+
+      rightPriceScale: {
+        borderColor: "rgba(255,255,255,0.05)",
+      },
+
+      timeScale: {
+        borderColor: "rgba(255,255,255,0.05)",
+
+        timeVisible: true,
+
+        secondsVisible: false,
+      },
+    });
+
+    const candleSeries = chart.addSeries(CandlestickSeries, {
+      upColor: "#22c55e",
+
+      downColor: "#ec4899",
+
+      borderVisible: false,
+
+      wickUpColor: "#22c55e",
+
+      wickDownColor: "#ec4899",
+    });
+
+    chartInstance.current = chart;
+
+    candleSeriesRef.current = candleSeries;
+
+    const handleResize = () => {
+      if (!chartRef.current) return;
+
+      chart.applyOptions({
+        width: chartRef.current.clientWidth,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+
+      chart.remove();
+    };
+  }, []);
+
+  // =========================
+  // FETCH OHLC
+  // =========================
+  useEffect(() => {
+    const fetchOHLC = async () => {
+      try {
+        const days = ranges[timeframe] || 1;
+
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=${days}`,
+        );
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          console.error("Invalid OHLC data");
+          return;
+        }
+
+        const formatted = data.map((item) => ({
+          time: item[0] / 1000,
+
+          open: item[1],
+
+          high: item[2],
+
+          low: item[3],
+
+          close: item[4],
+        }));
+
+        // update candle
+        candleSeriesRef.current?.setData(formatted);
+
+        chartInstance.current?.timeScale().fitContent();
+
+        // RSI
+        const closes = formatted.map((candle) => candle.close);
+
+        const rsi = calculateRSI(closes);
+
+        setRsiData?.(rsi);
+
+        // divergence
+        const divergence = detectBullishDivergence(formatted, rsi);
+
+        setBullishDivergence?.(divergence);
+      } catch (error) {
+        console.error("OHLC fetch failed:", error);
+      }
+    };
+
+    fetchOHLC();
+
+    const interval = setInterval(fetchOHLC, 30000);
+
+    return () => clearInterval(interval);
+  }, [timeframe, currentPrice, setRsiData, setBullishDivergence]);
+
+  return <div ref={chartRef} className="w-full h-[420px]" />;
 }

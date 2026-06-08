@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 
 import {
@@ -27,9 +27,18 @@ ChartJS.register(
 
 export default function Calculator() {
   // --- 1. State ของระบบการจัดการข้อมูล ---
-  const [monthlySaving, setMonthlySaving] = useState(200);
-  const [savingPeriod, setSavingPeriod] = useState(4);
-  const [btcGrowth, setBtcGrowth] = useState(8);
+  const location = useLocation();
+  const savedState = location.state;
+  const [monthlySaving, setMonthlySaving] = useState(
+    savedState?.monthlySaving || 200,
+  );
+
+  const [savingPeriod, setSavingPeriod] = useState(
+    savedState?.savingPeriod || 4,
+  );
+
+  const [btcGrowth, setBtcGrowth] = useState(savedState?.btcGrowth || 8);
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [liveBtcPrice, setLiveBtcPrice] = useState("0.00");
   const [selectedInflationYear, setSelectedInflationYear] =

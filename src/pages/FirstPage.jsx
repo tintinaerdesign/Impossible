@@ -525,7 +525,7 @@ export default function FirstPage() {
                     </h3>
 
                     <p className="text-sm text-zinc-500">
-                      Let's see the power of componding of assets .
+                      See how compound growth may impact your savings.
                     </p>
                   </div>
                 </div>
@@ -534,6 +534,7 @@ export default function FirstPage() {
                 <div className="w-full bg-[#151414] border border-white/10 rounded-xl p-4">
                   <div className="flex flex-col items-center justify-center">
                     <p className="bg-gradient-to-r from-[#f2a900] to-[#ec398f] bg-clip-text text-transparent text-5xl font-semibold">
+                      $
                       {(Number(fvResult) || 0).toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -567,6 +568,20 @@ export default function FirstPage() {
                       </span>
                     </div>
                   </div>
+                  <div
+                    readOnly
+                    className="mt-4 w-full bg-[#1a1a1c] border border-white/10 rounded-xl py-2.5 px-4 flex justify-between items-center"
+                  >
+                    <span className="text-xs text-gray-400 flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm">
+                        trending_up
+                      </span>
+                      Growth Rate
+                    </span>
+                    <span className="text-zinc-200 font-mono font-semibold">
+                      {btcGrowth.toFixed(2)}%
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 px-1 select-none">
                   <span className="text-xl text-amber-500 animate-pulse">
@@ -574,7 +589,7 @@ export default function FirstPage() {
                   </span>
 
                   <p className="text-md font-light text-zinc-500 tracking-wide">
-                    The real purchasing power may decrease with inflation.
+                    Inflation may reduce your future purchasing power.
                   </p>
                 </div>
 
@@ -586,12 +601,17 @@ export default function FirstPage() {
                     Back
                   </button>
 
-                  <button
-                    onClick={handleNextStep}
-                    className="w-full py-3 bg-gradient-to-r from-[#4a183e] via-[#5f1c50] to-[#7a245d] border shadow-[0_0_20px_rgba(236,0,101,0.12)] rounded-2xl hover:scale-[1.02] transition-all duration-300"
+                  <Link
+                    to="/Calculator"
+                    state={{
+                      monthlySaving,
+                      savingPeriod,
+                      btcGrowth,
+                    }}
+                    className="w-full py-3 flex justify-center bg-gradient-to-r from-[#4a183e] via-[#5f1c50] to-[#7a245d] border shadow-[0_0_20px_rgba(236,0,101,0.12)] rounded-2xl hover:scale-[1.02] transition-all duration-300"
                   >
-                    See Full Deatils
-                  </button>
+                    More Deatils
+                  </Link>
                 </div>
                 <div className="h-[1px] w-full border-white/10 mt-3"></div>
               </div>
@@ -602,13 +622,12 @@ export default function FirstPage() {
         {/* === ฝั่งซ้ายเดิม: เนื้อหาข้อความพาดหัว (กินพื้นที่ 5 ช่องหลังบนจอใหญ่) === */}
         <div className="lg:col-span-5 flex flex-col space-y-6">
           <h1 className="font-['Orbitron'] text-4xl md:text-5xl font-black leading-[1.2] tracking-tight text-left">
-            Navigate Purchasing Power <br /> & Inflation with Clarity
+            Navigate Inflation & Purchasing Power with Clarity
           </h1>
 
           <p className="text-zinc-400 text-lg leading-relaxed font-light">
             Explore real-time market data, inflation insights, and financial
-            tools designed to help you better understand digital assets and
-            macro trends.
+            tools to better understand digital assets and macroeconomic trends.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
