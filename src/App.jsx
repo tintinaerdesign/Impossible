@@ -1,18 +1,30 @@
 import { Routes, Route } from "react-router-dom";
-import FirstPage from "./pages/FirstPage";
-import Calculator from "./pages/Calculator";
-import CoinList from "./pages/coinlist";
-import BtcPage from "./pages/BtcPage";
-import Practice from "./pages/Practice";
+
+import FirstPage from "./sites/FirstPage";
+import Calculator from "./sites/Calculator";
+import BtcPage from "./sites/BtcPage";
+import Practice from "./sites/Practice";
+
+import CoinList from "./pages/CoinList";
+
+import DashboardLayouts from "./layouts/DashboardLayouts";
 
 export default function App() {
   return (
     <Routes>
+      {/* ไม่มี Sidebar */}
       <Route path="/" element={<FirstPage />} />
-      <Route path="/Calculator" element={<Calculator />} />
-      <Route path="/coinlist" element={<CoinList />} />
-      <Route path="/BtcPage" element={<BtcPage />} />
-      <Route path="/Practice" element={<Practice />} />
+
+      <Route path="/calculator" element={<Calculator />} />
+
+      {/* มี Sidebar */}
+      <Route element={<DashboardLayouts />}>
+        <Route path="/dashboard" element={<BtcPage />} />
+
+        <Route path="/coinlist" element={<CoinList />} />
+
+        <Route path="/practice" element={<Practice />} />
+      </Route>
     </Routes>
   );
 }

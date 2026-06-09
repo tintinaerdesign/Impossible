@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
-
+import Navbar from "../components/common/Navbar";
+import { calculateInvestment } from "../Utils/calculateInvestment";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,6 +30,14 @@ export default function Calculator() {
   // --- 1. State ของระบบการจัดการข้อมูล ---
   const location = useLocation();
   const savedState = location.state;
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [liveBtcPrice, setLiveBtcPrice] = useState("0.00");
+  const [selectedInflationYear, setSelectedInflationYear] =
+    useState("the future");
+
+  const dropdownRef = useRef(null);
+
   const [monthlySaving, setMonthlySaving] = useState(
     savedState?.monthlySaving || 200,
   );
@@ -38,38 +47,20 @@ export default function Calculator() {
   );
 
   const [btcGrowth, setBtcGrowth] = useState(savedState?.btcGrowth || 8);
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [liveBtcPrice, setLiveBtcPrice] = useState("0.00");
-  const [selectedInflationYear, setSelectedInflationYear] =
-    useState("the future");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const dropdownRef = useRef(null);
+  const {
+    principal,
+    fvResult,
+    adjustedPurchasingPower,
+    totalPowerLossPercent,
+  } = calculateInvestment({
+    monthlySaving,
+    savingPeriod,
+    btcGrowth,
+  });
 
   const btcDataValues = [
     65, 59, 80, 81, 56, 55, 40, 50, 60, 75, 90, 85, 95, 110,
   ];
-
-  // --- 2. Logic การคำนวณทางคณิตศาสตร์แบบเรียลไทม์ ---
-  const principal = monthlySaving * 12 * savingPeriod;
-
-  let fvResult = 0;
-  if (btcGrowth > 0) {
-    const monthlyRate = btcGrowth / 100 / 12;
-    const totalMonths = savingPeriod * 12;
-    fvResult =
-      (monthlySaving * (Math.pow(1 + monthlyRate, totalMonths) - 1)) /
-      monthlyRate;
-  } else {
-    fvResult = principal;
-  }
-
-  const fiatDilutionRate = 0.07;
-  const adjustedPurchasingPower =
-    fvResult / Math.pow(1 + fiatDilutionRate, savingPeriod);
-  const totalPowerLossPercent =
-    fvResult > 0 ? (adjustedPurchasingPower / fvResult - 1) * 100 : 0;
 
   // --- 3. Real-time Binance WebSocket ---
   useEffect(() => {
@@ -171,42 +162,6 @@ export default function Calculator() {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      console.log("ระยะสกรอลล์ปัจจุบัน:", window.scrollY);
-      if (window.scrollY > 20) {
-        // ถ้าเลื่อนลงมามากกว่า 20px
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // เช็กว่าจุดที่คลิก ไม่ได้อยู่ในกล่อง Dropdown (เลือกปี)
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-
-      // 💡 ปิดเมนูมือถือก็ต่อเมื่อ: จุดที่คลิก "ไม่ใช่" ปุ่มแฮมเบอร์เกอร์/เมนูมือถือ
-      // โดยเช็กจาก คลาส หรือ attribute (วิธีนี้ปลอดภัยที่สุด ไม่ต้องพึ่ง stopPropagation)
-      if (!event.target.closest(".mobile-menu-container")) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -231,161 +186,7 @@ export default function Calculator() {
 
   return (
     <div className="bg-[#0b0b0d] bg-linear-to-br from-black to-gray-900 text-white font-sans antialiased overflow-x-hidden">
-      {/* Navigation */}
-      <nav
-        className={`fixed px-6 z-50 left-1/2 -translate-x-1/2 flex items-center transition-all duration-500 ease-in-out ${
-          isScrolled
-            ? "top-4 h-14 w-11/12 rounded-2xl border border-white/10 bg-[#0f0f0f]/90 backdrop-blur-lg"
-            : "top-0 h-20 w-full border-b border-white/[0.05] bg-[#0f0f0f]/80 backdrop-blur-md"
-        }`}
-      >
-        {/* 💡 ใช้ Grid 3 คอลัมน์ขนาดเท่ากัน เพื่อบังคับให้ส่วนผสมตรงกลางอยู่กึ่งกลางกล่องเสมอโดยไม่ใช้ Absolute */}
-        <div
-          ref={dropdownRef}
-          className="w-full grid grid-cols-2 md:grid-cols-3 items-center relative"
-        >
-          {/* [1] ฝั่งซ้าย: Logo */}
-          <div className="flex justify-start">
-            <span
-              className={`logo whitespace-nowrap transition-all duration-500 hover:scale-105 hover:brightness-110 select-none ${
-                isScrolled ? "text-xl" : "text-[28px]"
-              }`}
-              style={{
-                fontWeight: "800",
-                letterSpacing: "-1.5px",
-                cursor: "pointer",
-                background: "linear-gradient(135deg, #d879a8, #ec0065)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Start D
-            </span>
-          </div>
-
-          {/* [2] ตรงกลาง: Menu สำหรับ Desktop */}
-          {/* 💡 ปรับมาใช้ flex justify-center บนระนาบปกติ ทำให้ล็อกจุดกึ่งกลางของตัวแคปซูลได้แม่นยำ ไม่บินซ้ายอีกต่อไป */}
-          <div className="hidden md:flex justify-center items-center">
-            <ul className="flex items-center gap-6 lg:gap-8 text-[14px] lg:text-[15px] font-medium whitespace-nowrap">
-              <li>
-                <Link
-                  to="/"
-                  className="hover:text-white text-gray-400 transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="#calculator"
-                  className="hover:text-white text-gray-400 transition-colors"
-                >
-                  Calculator
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#inflation"
-                  className="hover:text-white text-gray-400 transition-colors"
-                >
-                  Inflation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#price-widget"
-                  className="hover:text-white text-gray-400 transition-colors"
-                >
-                  Price Widget
-                </a>
-              </li>
-              <li>
-                <Link
-                  to="/coinlist"
-                  className="hover:text-white text-gray-400 transition-colors"
-                >
-                  Coin Market
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* [3] ฝั่งขวา: ปุ่ม Toggle บนมือถือ หรือพื้นที่ว่างบนคอมฯ */}
-          <div className="flex justify-end items-center mobile-menu-container">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsMobileMenuOpen(!isMobileMenuOpen);
-              }}
-              type="button"
-              className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none flex items-center justify-center"
-            >
-              <span className="material-symbols-outlined text-2xl">
-                {isMobileMenuOpen ? "close" : "menu"}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* ==================== DROPDOWN MENU สำหรับ MOBILE ==================== */}
-        <div
-          className={`absolute right-0 w-full mobile-menu-container bg-[#0f0f0f]/95 backdrop-blur-lg border-b border-white/[0.05] md:hidden transition-all duration-300 ease-in-out ${
-            isScrolled ? "top-14 rounded-b-2xl" : "top-20"
-          } ${
-            isMobileMenuOpen
-              ? "opacity-100 translate-y-0 pointer-events-auto"
-              : "opacity-0 -translate-y-4 pointer-events-none"
-          }`}
-        >
-          <ul className="flex flex-col p-6 space-y-4 text-base font-medium">
-            <li>
-              <Link
-                to="/"
-                className="hover:text-white text-gray-400 transition-colors"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <a
-                href="#calculator"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
-              >
-                Calculator
-              </a>
-            </li>
-            <li>
-              <a
-                href="#inflation"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
-              >
-                Inflation
-              </a>
-            </li>
-            <li>
-              <a
-                href="#price-widget"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block hover:text-white text-gray-400 py-2 border-b border-white/[0.02]"
-              >
-                Price Widget
-              </a>
-            </li>
-            <li>
-              <Link
-                to="/coinlist"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block hover:text-white text-gray-400 py-2"
-              >
-                Coin Market
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <Navbar />
       {/* Hero Section */}
       <section className="scroll-animate transition-all duration-700 ease-out scroll-mt-24 flex flex-col px-6 py-24 md:py-32 w-full min-h-[70vh] items-center justify-center text-center">
         <div className="max-w-2xl relative mt-12 z-10 space-y-4">
