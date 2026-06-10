@@ -34,8 +34,14 @@ export default function CoinDashboard() {
         setCoin(data);
       } catch (error) {
         console.error("Error fetching coin:", error);
-      } finally {
-        setLoading(false);
+        setError(error.message);
+      }
+      if (error) {
+        return (
+          <div className="p-8 animate-pulse font-[Obitron] text-yellow-400">
+            API limit reached. Please wait a few seconds...
+          </div>
+        );
       }
     }
 
