@@ -6,7 +6,9 @@ export default function CoinList() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold m-6">Crypto currencies Market</h1>
+      <h1 className="text-6xl text-pink-300 m-6">
+        <span className="text-7xl">C</span>ryptocurrencies Market
+      </h1>
       <CoinTable coins={coins} loading={loading} />
     </div>
   );

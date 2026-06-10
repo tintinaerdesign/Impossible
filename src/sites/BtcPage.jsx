@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { YAxis } from "recharts";
 
 //ดึง component มาใช้เด้อ อิหล่า
 import Sidebar from "../components/common/Sidebar.jsx";
 import CoinHeader from "../components/bitcoin/CoinHeader.jsx";
-import BtcChart from "../components/bitcoin/BtcChart.jsx";
+import CoinChart from "../components/bitcoin/CoinChart.jsx";
 import MarketInfo from "../components/bitcoin/MarketInfo.jsx";
 
 export default function BtcPage() {
   // 1. 🌐 ใช้สเตตสำหรับเก็บข้อมูล
-  const [bitcoin, setBitcoin] = useState(null);
-  const [coins, setCoins] = useState([]);
+  const [coin, setCoin] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState("1D");
 
@@ -20,11 +19,11 @@ export default function BtcPage() {
   const fetchCryptoData = async () => {
     try {
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,ripple,solana,cardano&order=market_cap_desc&sparkline=false",
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin&sparkline=false",
       );
       const data = await response.json();
-      setCoins(data);
-      setBitcoin(data[0]); // ถ้า Bitcoin อยู่ในตำแหน่งแรกของอาเรย์
+
+      setCoin(data[0]); // ถ้า Bitcoin อยู่ในตำแหน่งแรกของอาเรย์
     } catch (error) {
       console.error("Error fetching Crypto:", error);
     }
@@ -49,7 +48,8 @@ export default function BtcPage() {
         {/* แถบเส้นทางด้านบนสุด */}
         <div className="flex justify-between items-center gap-4 border-b border-zinc-900 pb-4">
           <div className="text-xs text-zinc-500 font-medium">
-            Coin List &gt; <span className="text-zinc-300">Bitcoin</span>
+            Coin List &gt;{" "}
+            <span className="text-zinc-300">{coin ? coin.name : "--"}</span>
           </div>
 
           <div className="flex gap-3">
@@ -61,7 +61,7 @@ export default function BtcPage() {
             </button>
           </div>
         </div>
-        <CoinHeader bitcoin={bitcoin} />
+        <CoinHeader coin={coin} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* --- ฝั่งซ้าย: กล่องแสดงกราฟ --- */}
@@ -102,9 +102,9 @@ export default function BtcPage() {
 
             {/* พื้นที่สำหรับแสดงชาร์ตดึงจากโมดูลนอก (Clean & Professional) */}
             <div className="w-full h-[450px] min-h-[450px] relative bg-gradient-to-b from-pink-500/[0.01] to-transparent rounded-xl border border-zinc-900/40 p-2 overflow-hidden">
-              {bitcoin ? (
-                <BtcChart
-                  currentPrice={bitcoin.current_price}
+              {coin ? (
+                <CoinChart
+                  currentPrice={coin.current_price}
                   timeframe={timeframe}
                 />
               ) : (
@@ -113,7 +113,7 @@ export default function BtcPage() {
                 </div>
               )}
 
-              {bitcoin && (
+              {coin && (
                 <div className="absolute left-4 top-4 text-[10px] text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20 font-[Orbitron] backdrop-blur-md">
                   LIVE
                 </div>
@@ -125,8 +125,8 @@ export default function BtcPage() {
               {[
                 {
                   label: "24h",
-                  val: bitcoin
-                    ? `${bitcoin.price_change_percentage_24h.toFixed(2)}%`
+                  val: coin
+                    ? `${coin.price_change_percentage_24h.toFixed(2)}%`
                     : "--",
                 },
                 { label: "7d", val: "+8.12%" },
@@ -150,7 +150,7 @@ export default function BtcPage() {
             </div>
           </div>
 
-          <MarketInfo bitcoin={bitcoin} />
+          <MarketInfo coin={coin} />
         </div>
 
         {/* ส่วนท้ายสุด: About Box */}

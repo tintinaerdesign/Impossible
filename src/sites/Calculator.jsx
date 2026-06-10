@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/common/Navbar";
-import { calculateInvestment } from "../Utils/calculateInvestment";
+import { calculateInvestment } from "../utils/calculateInvestment";
 import {
   Chart as ChartJS,
   CategoryScale,

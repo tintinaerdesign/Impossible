@@ -1,60 +1,79 @@
-export default function ({ bitcoin }) {
+export default function MarketInfo({ coin }) {
+  const marketData = coin?.market_data;
+
+  const symbol = coin?.symbol?.toUpperCase();
+
   return (
     <div className="space-y-6">
-      {/* 2. บล็อกข้อมูลข้อมูลรายละเอียดตลาดเชิงลึก */}
+      {/* Market Info */}
       <div className="bg-zinc-950/60 border border-zinc-900 rounded-3xl p-6 space-y-3.5">
         <h3 className="text-md font-bold text-zinc-400 font-sans tracking-wider uppercase mb-1">
           Market Info
         </h3>
+
         {[
           {
             name: "Market Cap",
-            val: bitcoin ? `$${(bitcoin.market_cap / 1e12).toFixed(2)}T` : "--",
+            val: marketData?.market_cap?.usd
+              ? `$${(marketData.market_cap.usd / 1e12).toFixed(2)}T`
+              : "--",
           },
+
           {
             name: "Market Cap Rank",
-            val: bitcoin ? `#${bitcoin.market_cap_rank}` : "--",
+            val: coin?.market_cap_rank ? `#${coin.market_cap_rank}` : "--",
             highlight: true,
           },
+
           {
             name: "Circulating Supply",
-            val: bitcoin
-              ? `${(bitcoin.circulating_supply / 1e6).toFixed(2)}M BTC`
+            val: marketData?.circulating_supply
+              ? `${(marketData.circulating_supply / 1e6).toFixed(2)}M ${symbol}`
               : "--",
           },
+
           {
             name: "Total Supply",
-            val: bitcoin?.total_supply
-              ? `${(bitcoin.total_supply / 1e6).toFixed(2)}M BTC`
+            val: marketData?.total_supply
+              ? `${(marketData.total_supply / 1e6).toFixed(2)}M ${symbol}`
               : "--",
           },
+
           {
             name: "Max Supply",
-            val: bitcoin?.max_supply
-              ? `${(bitcoin.max_supply / 1e6).toFixed(2)}M BTC`
+            val: marketData?.max_supply
+              ? `${(marketData.max_supply / 1e6).toFixed(2)}M ${symbol}`
               : "--",
           },
-          { name: "Market Dominance", val: "52.34%" },
+
+          {
+            name: "Market Dominance",
+            val: "--",
+          },
+
           {
             name: "All Time High",
-            val: bitcoin
-              ? `$${bitcoin.ath.toLocaleString(undefined, {
+            val: marketData?.ath?.usd
+              ? `$${marketData.ath.usd.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}`
               : "--",
-            sub: bitcoin
-              ? new Date(bitcoin.ath_date).toLocaleDateString()
+
+            sub: marketData?.ath_date?.usd
+              ? new Date(marketData.ath_date.usd).toLocaleDateString()
               : "--",
           },
+
           {
             name: "All Time Low",
-            val: bitcoin
-              ? `$${bitcoin.atl.toLocaleString(undefined, {
+            val: marketData?.atl?.usd
+              ? `$${marketData.atl.usd.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}`
               : "--",
-            sub: bitcoin
-              ? new Date(bitcoin.atl_date).toLocaleDateString()
+
+            sub: marketData?.atl_date?.usd
+              ? new Date(marketData.atl_date.usd).toLocaleDateString()
               : "--",
           },
         ].map((row, i) => (
@@ -64,12 +83,18 @@ export default function ({ bitcoin }) {
           >
             <div className="flex justify-between text-md">
               <span className="text-zinc-500 font-medium">{row.name}</span>
+
               <span
-                className={`font-bold font-sans ${row.highlight ? "text-transparent bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text" : "text-zinc-300"}`}
+                className={`font-bold font-sans ${
+                  row.highlight
+                    ? "text-transparent bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text"
+                    : "text-zinc-300"
+                }`}
               >
                 {row.val}
               </span>
             </div>
+
             {row.sub && (
               <p className="text-[9px] text-zinc-600 text-right mt-0.5 font-sans">
                 {row.sub}

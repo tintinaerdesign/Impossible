@@ -8,7 +8,8 @@ import {
   Tooltip,
 } from "recharts";
 
-export default function BtcChart({ timeframe, setRsiData }) {
+export default function CoinChart({ coinId, timeframe, setRsiData }) {
+  console.log(coinId);
   const [chartData, setChartData] = useState([]);
 
   // timeframe map
@@ -26,7 +27,7 @@ export default function BtcChart({ timeframe, setRsiData }) {
         const days = daysMap[timeframe] || 7;
 
         const response = await fetch(
-          `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}`,
+          `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`,
         );
 
         const data = await response.json();
@@ -58,7 +59,7 @@ export default function BtcChart({ timeframe, setRsiData }) {
     };
 
     fetchChart();
-  }, [timeframe, setRsiData]);
+  }, [coinId, timeframe, setRsiData]);
 
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden">
