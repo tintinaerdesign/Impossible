@@ -60,7 +60,7 @@ export default function Navbar() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Start D
+              Save D
             </span>
           </div>
 
