@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import StolenBg from "../../assets/warn.png";
+import StolenBg from "../../assets/Warn.png";
 
 export default function CommonMistakes() {
   const mistakes = [
