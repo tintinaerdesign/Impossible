@@ -41,7 +41,7 @@ export default function Navbar() {
       transition={{ duration: 0.1 }}
       className={`
         fixed left-1/2 -translate-x-1/2
-        z-[999] top-4 cursor-pointer
+        z-[50] cursor-pointer
         duration-600 transition-all border border-[#ec0065]/30
         bg-black/50
         backdrop-blur-xl
@@ -55,7 +55,7 @@ export default function Navbar() {
           className="flex items-center gap-2 font-bold text-2xl tracking-tight"
         >
           <span className="bg-gradient-to-r from-[#ec0065] to-[#f2a900] bg-clip-text text-transparent">
-            Save D
+            SaveSats
           </span>
         </Link>
 

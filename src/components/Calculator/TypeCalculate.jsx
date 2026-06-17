@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import { Link } from "react-router-dom";
-import { calculateInvestment } from "./calculateInvestment";
-import StepIndicator from "./StepIndicator";
+
+import { calculateInvestment } from "../FirstPage/Utility/calculateInvestment";
+
+import StepIndicator from "../FirstPage/Utility/StepIndicator";
+
 export default function TypeCalculate({
   monthlySaving,
   setMonthlySaving,
@@ -9,6 +13,7 @@ export default function TypeCalculate({
   setSavingPeriod,
   btcGrowth,
   setBtcGrowth,
+  onOpenDetails,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -47,9 +52,9 @@ export default function TypeCalculate({
   return (
     <div className="lg:justify-end mt-20 flex justify-center items-center w-full">
       <div
-        className={`w-full max-w-[460px] min-h-[580px] transition-all duration-700 ease-out ${
+        className={`w-full max-w-[460px] min-h-[580px] transition-all duration-140 ease-out ${
           isTransitioning
-            ? "opacity-0 -translate-x-24 blur-sm scale-[0.98]"
+            ? "opacity-0 -translate-x-7 blur-sm scale-[0.98]"
             : "opacity-100 translate-x-0 blur-0 scale-100"
         }`}
       >
@@ -59,7 +64,7 @@ export default function TypeCalculate({
             <StepIndicator currentStep={currentStep} />
 
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-[#ec0065] to-[#f2a900] text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+              <div className="bg-gradient-to-r whitespace-nowrap from-[#ec0065] to-[#f2a900] text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
                 Step 1
               </div>
 
@@ -300,17 +305,23 @@ export default function TypeCalculate({
                 Back
               </button>
 
-              <Link
-                to="/Calculator"
-                state={{
-                  monthlySaving,
-                  savingPeriod,
-                  btcGrowth,
-                }}
-                className="w-full flex justify-center items-center py-3 rounded-2xl bg-gradient-to-r from-[#4a183e] via-[#5f1c50] to-[#7a245d]"
+              <button
+                onClick={onOpenDetails}
+                className="
+    w-full
+    rounded-2xl
+    py-5
+    bg-gradient-to-r
+    from-orange-500
+    to-pink-500
+    text-white
+    
+    hover:scale-[1.02]
+    transition
+  "
               >
                 More Details
-              </Link>
+              </button>
             </div>
           </div>
         )}

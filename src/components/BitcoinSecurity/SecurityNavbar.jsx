@@ -55,7 +55,7 @@ export default function Navbar() {
           className="flex items-center gap-2 font-bold text-2xl tracking-tight"
         >
           <span className="bg-gradient-to-r from-[#ec0065] to-[#f2a900] bg-clip-text text-transparent">
-            Save D
+            SaveSats
           </span>
         </Link>
 

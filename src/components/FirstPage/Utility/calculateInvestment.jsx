@@ -1,25 +1,21 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
 export function calculateInvestment({
   monthlySaving,
   savingPeriod,
   btcGrowth,
 }) {
-  const principal = monthlySaving * 12 * savingPeriod;
+  const totalMonths = savingPeriod * 12;
+
+  const principal = monthlySaving * totalMonths;
+
+  const monthlyRate = btcGrowth / 100 / 12;
 
   let fvResult = principal;
 
-  if (btcGrowth > 0) {
-    const monthlyRate = btcGrowth / 100 / 12;
-
-    const totalMonths = savingPeriod * 12;
-
-    const calculatedValue =
-      (monthlySaving * (Math.pow(1 + monthlyRate, totalMonths) - 1)) /
-      monthlyRate;
-
-    fvResult = isFinite(calculatedValue) ? calculatedValue : principal;
+  if (monthlyRate > 0) {
+    fvResult =
+      monthlySaving *
+      ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) *
+      (1 + monthlyRate);
   }
 
   const fiatDilutionRate = 0.07;
@@ -28,12 +24,15 @@ export function calculateInvestment({
     fvResult / Math.pow(1 + fiatDilutionRate, savingPeriod);
 
   const totalPowerLossPercent =
-    fvResult > 0 ? (adjustedPurchasingPower / fvResult - 1) * 100 : 0;
+    fvResult > 0 ? ((adjustedPurchasingPower - fvResult) / fvResult) * 100 : 0;
 
   return {
-    principal,
-    fvResult,
-    adjustedPurchasingPower,
+    principal: Math.round(principal),
+
+    fvResult: Math.round(fvResult),
+
+    adjustedPurchasingPower: Math.round(adjustedPurchasingPower),
+
     totalPowerLossPercent,
   };
 }

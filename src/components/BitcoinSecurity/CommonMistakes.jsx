@@ -53,7 +53,7 @@ export default function CommonMistakes() {
     rounded-[36px]
     object-cover
     border border-white/10
-    shadow-2xl scale-115 mt-20
+    shadow-[0_0_20px_rgba(236,57,143,0.18)] scale-115 mt-20
   "
           />
 
@@ -100,8 +100,6 @@ export default function CommonMistakes() {
                 transition duration-300
               "
               >
-                <div className="p-2 text-g text-white">{item.title}</div>
-
                 {/* title */}
 
                 <div className="rounded-2xl border border-red-600/20 bg-red-600/10 p-3 mt-2">
