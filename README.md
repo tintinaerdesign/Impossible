@@ -30,13 +30,13 @@ Track real-time cryptocurrency prices, explore market data, and simulate inflati
 
 ## 🔗 Live Pages
 
-### Crypto Market
+### Saving Calculator
 
-http://localhost:5173/coinlist
+[http://localhost:5173/coinlist](https://impossible-git-main-toeng0966945736-3342s-projects.vercel.app/)
 
-### Calculator
+### How to Secure your Bitcoin
 
-http://localhost:5173/calculator
+[http://localhost:5173/calculator](https://impossible-git-main-toeng0966945736-3342s-projects.vercel.app/BitcoinSecurity)
 
 ## 🚀 Run Locally
 
