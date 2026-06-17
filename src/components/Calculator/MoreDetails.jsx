@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import InvestmentGrowthChart from "./charts/InChart";
+import InvestmentGrowthChart from "./Charts/InChart";
 import { calculateInvestment } from "../FirstPage/Utility/calculateInvestment";
 
 export default function MoreDetails({
