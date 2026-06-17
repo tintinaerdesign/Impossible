@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 
 import TypeCalculate from "../Calculator/TypeCalculate";
 import { calculateInvestment } from "../FirstPage/Utility/calculateInvestment";
+import InChart from "../Calculator/Charts/InChart";
 
 import heroBg from "../../assets/kid-future.png";
 
