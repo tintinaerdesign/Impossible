@@ -1,8 +1,6 @@
 # 🚀 Start D - Crypto Market Dashboard
 
-<<<<<<< HEAD
-<img src="/public/price-widget.png" width="900" alt="project">
-=======
+https://impossible-git-main-toeng0966945736-3342s-projects.vercel.app/
 ![image alt](https://github.com/tintinaerdesign/Impossible/blob/main/price%20widget.png)
 >>>>>>> d59579366a20342b18db6a9056f50d59cddf6fed
 
