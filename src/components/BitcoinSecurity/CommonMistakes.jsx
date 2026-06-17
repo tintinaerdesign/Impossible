@@ -63,7 +63,7 @@ export default function CommonMistakes() {
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="max-w-4xl mx-auto text-center"
+              className="max-w-4xl mx-auto text-center z-100"
             >
               <div
                 className="

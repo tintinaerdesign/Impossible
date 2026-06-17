@@ -2,9 +2,9 @@ export default function StepIndicator({ currentStep }) {
   const steps = ["Monthly Saving", "Time Horizon", "Growth Rate", "Results"];
 
   return (
-    <div className="relative md:w-full w-[380px]  border-b border-white/5 pb-6">
+    <div className="relative md:w-full border-b border-white/5 pb-6">
       {/* line */}
-      <div className="absolute top-5 w-88 left-[5%] right-[12%] h-[1px] bg-white/10" />
+      <div className="absolute top-5 left-[12%] right-[12%] h-[1px] bg-white/10" />
       <div className="relative flex justify-between items-center">
         {steps.map((label, index) => {
           const step = index + 1;
