@@ -52,9 +52,9 @@ export default function TypeCalculate({
   return (
     <div className="lg:justify-end mt-20 flex justify-center items-center w-full">
       <div
-        className={`w-full max-w-[460px] min-h-[580px] transition-all duration-140 ease-out ${
+        className={`w-full max-w-[460px] min-h-[580px] transition-all duration-300 ease-out ${
           isTransitioning
-            ? "opacity-0 -translate-x-7 blur-sm scale-[0.98]"
+            ? "opacity-0 -translate-x-16 blur-sm scale-[0.98]"
             : "opacity-100 translate-x-0 blur-0 scale-100"
         }`}
       >

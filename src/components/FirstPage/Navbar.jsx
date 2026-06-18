@@ -139,8 +139,8 @@ export default function Navbar() {
             }}
             className="
               md:hidden
-              border-t border-white/10
-              bg-[#0f0f0f]/95
+              border-b rounded-3xl border-white/10
+              bg-[#0f0f0f]/95 
               backdrop-blur-xl
             "
           >

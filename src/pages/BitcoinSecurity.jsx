@@ -1,4 +1,4 @@
-import SecurityNavbar from "../components/BitcoinSecurity/SecurityNavbar";
+import Navbar from "../components/FirstPage/Navbar";
 import HeroSection from "../components/BitcoinSecurity/HeroSection";
 import WhySelfCustody from "../components/BitcoinSecurity/WhySelfCustody";
 import MtDown from "../components/BitcoinSecurity/MtDown";
@@ -21,7 +21,7 @@ export default function (BitcoinSecurity) {
       <div className="pointer-events-none absolute bottom-[-200px] left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-pink-500/10 blur-[180px]" />
 
       {/* Navbar */}
-      <SecurityNavbar />
+      <Navbar />
 
       {/* 1.Hero */}
       <HeroSection />
