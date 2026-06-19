@@ -81,10 +81,6 @@ export default function TypeCalculate({
 
             <div className="bg-[#151414] rounded-2xl border border-white/5 p-5">
               <div className="space-y-2 mb-8">
-                <div className="text-lg text-white uppercase">
-                  Monthly Saving (USD)
-                </div>
-
                 <div className="w-full bg-[#100f0f] border border-white/10 rounded-xl flex items-center h-17 px-4">
                   <span className="text-gray-500 text-2xl">$</span>
 

@@ -38,12 +38,12 @@ export default function StepIndicator({ currentStep }) {
               {/* label */}
               <span
                 className={`
-                  mt-3 text-[11px]
-                  transition-all duration-300
-                  whitespace-nowrap
-
-                  ${isActive ? "text-pink-400" : "text-zinc-500"}
-                `}
+    hidden md:block
+    mt-2 text-[11px]
+    whitespace-nowrap
+    transition-all duration-300
+    ${isActive ? "text-pink-400" : "text-zinc-500"}
+  `}
               >
                 {label}
               </span>
