@@ -113,14 +113,14 @@ export default function MoreDetails({
                 <div className="rounded-3xl p-6 sm:p-1 bg-white/5 border border-white/5">
                   <p className="text-zinc-500 text-sm">Future Value</p>
 
-                  <h2 className="text-3xl sm:text-xl font-bold text-[#F97316] mt-2">
+                  <h2 className="text-xl md:text-3xl font-bold text-[#F97316] mt-2">
                     ${Math.round(fvResult)?.toLocaleString(undefined)}
                   </h2>
                 </div>
                 <div className="rounded-3xl p-6 sm:p-1 bg-white/5 border border-white/5">
                   <p className="text-zinc-500 text-sm">Total Invested</p>
 
-                  <h2 className="text-3xl sm:text-xl font-bold mt-2">
+                  <h2 className="text-xl md:text-3xl font-bold mt-2">
                     ${Math.round(principal)?.toLocaleString(undefined)}
                   </h2>
                 </div>
@@ -128,7 +128,7 @@ export default function MoreDetails({
                 <div className="rounded-3xl p-6 sm:p-1 bg-white/5 border border-white/5">
                   <p className="text-zinc-500 text-sm">Purchasing Power</p>
 
-                  <h2 className="text-3xl sm:text-xl font-bold mt-2 text-[#EC4899]">
+                  <h2 className="text-xl md:text-3xl font-bold mt-2 text-[#EC4899]">
                     ${Math.round(adjustedPurchasingPower)?.toLocaleString()}
                   </h2>
                 </div>
@@ -138,7 +138,7 @@ export default function MoreDetails({
                     Inflation Loss ({savingPeriod} years)
                   </p>
 
-                  <h2 className="text-3xl sm:text-xl font-bold mt-2 text-red-600">
+                  <h2 className="text-xl md:text-3xl font-bold mt-2 text-red-600">
                     -{Math.abs(totalPowerLossPercent).toFixed(1)}%
                   </h2>
                 </div>
