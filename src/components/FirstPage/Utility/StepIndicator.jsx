@@ -4,7 +4,7 @@ export default function StepIndicator({ currentStep }) {
   return (
     <div className="relative md:w-full border-b border-white/5 pb-6">
       {/* line */}
-      <div className="absolute w-80 md:w-88 top-5 left-[12%] right-[12%] h-[1px] bg-white/10" />
+      <div className="absolute w-80 md:w-88 top-5 left-10 right-10 h-[1px] bg-white/10" />
       <div className="relative flex justify-between items-center">
         {steps.map((label, index) => {
           const step = index + 1;
