@@ -14,7 +14,6 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -26,7 +25,6 @@ export default function Navbar() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -35,17 +33,9 @@ export default function Navbar() {
   return (
     <motion.nav
       ref={dropdownRef}
-      initial={{
-        opacity: 0,
-        y: -60,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.2,
-      }}
+      initial={{ opacity: 0, y: -60 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
       className={`
         fixed
         left-1/2
@@ -68,10 +58,14 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu - [แก้ไข: เพิ่มลิงก์ Learn เรียบร้อยแล้ว] */}
         <div className="hidden md:flex items-center gap-8 text-[15px]">
           <NavLink to="/" className="text-zinc-400 hover:text-white">
             Home
+          </NavLink>
+
+          <NavLink to="/LearnPage" className="text-zinc-400 hover:text-white">
+            Learn
           </NavLink>
 
           <NavLink
@@ -101,9 +95,8 @@ export default function Navbar() {
           Protect Your Bitcoin
         </Link>
 
-        {/* Mobile Hamburger */}
+        {/* Mobile Hamburger - [แก้ไข: ลบ ref={dropdownRef} ออกแล้ว] */}
         <button
-          ref={dropdownRef}
           onClick={() => setIsOpen(!isOpen)}
           className="
             md:hidden
@@ -122,21 +115,10 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{
-              opacity: 0,
-              y: -20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              y: -20,
-            }}
-            transition={{
-              duration: 0.2,
-            }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
             className="
               md:hidden
               border-b rounded-3xl border-white/10
@@ -152,6 +134,16 @@ export default function Navbar() {
                   className="text-zinc-300 hover:text-white"
                 >
                   Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/LearnPage"
+                  onClick={() => setIsOpen(false)}
+                  className="text-zinc-300 hover:text-white"
+                >
+                  Learn
                 </Link>
               </li>
 

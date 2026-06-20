@@ -1,4 +1,4 @@
-import Navbar from "../components/FirstPage/Navbar";
+import Navbar from "../components/common/Navbar";
 import HeroSection from "../components/BitcoinSecurity/HeroSection";
 import WhySelfCustody from "../components/BitcoinSecurity/WhySelfCustody";
 import MtDown from "../components/BitcoinSecurity/MtDown";
@@ -8,7 +8,7 @@ import SetupGuide from "../components/BitcoinSecurity/SetupGuide";
 import CommonMistakes from "../components/BitcoinSecurity/CommonMistakes";
 import KnowledgeSection from "../components/BitcoinSecurity/KnowledgeSection";
 
-import SecurityFooter from "../components/BitcoinSecurity/SecurityFooter";
+import Footer from "../components/common/Footer";
 
 export default function (BitcoinSecurity) {
   return (
@@ -62,7 +62,7 @@ export default function (BitcoinSecurity) {
       </section>
 
       {/* Footer */}
-      <SecurityFooter />
+      <Footer />
     </main>
   );
 }
