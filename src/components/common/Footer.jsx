@@ -104,14 +104,14 @@ export default function Footer() {
 
             <div className="space-y-4 text-zinc-400">
               <Link
-                to="/learn/rome"
+                to="/LearnPage"
                 className="block hover:text-white transition"
               >
                 The Rise of Rome
               </Link>
 
               <Link
-                to="/learn/glass-beads"
+                to="/NextChapter"
                 className="block hover:text-white transition"
               >
                 The Fall of Glass Beads
@@ -170,14 +170,14 @@ export default function Footer() {
 
             <div className="space-y-4 text-zinc-400">
               <Link
-                to="/self-custody"
+                to="/BitcoinSecurity"
                 className="block hover:text-white transition"
               >
                 Self-Custody Guide
               </Link>
 
               <Link
-                to="/security"
+                to="/BitcoinSecurity"
                 className="block hover:text-white transition"
               >
                 Bitcoin Security
@@ -211,7 +211,7 @@ export default function Footer() {
       "
         >
           <p className="text-zinc-500 text-sm">
-            © {new Date().getFullYear()} SaveSats. All rights reserved.
+            © {new Date().getFullYear()} Start D. All rights reserved.
           </p>
 
           <p
