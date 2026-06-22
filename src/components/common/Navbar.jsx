@@ -54,14 +54,14 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="font-bold text-2xl">
           <span className="bg-gradient-to-r from-[#ec0065] to-[#f2a900] bg-clip-text text-transparent">
-            SaveSats
+            Start D
           </span>
         </Link>
 
         {/* Desktop Menu - [แก้ไข: เพิ่มลิงก์ Learn เรียบร้อยแล้ว] */}
         <div className="hidden md:flex items-center gap-8 text-[15px]">
           <NavLink to="/" className="text-zinc-400 hover:text-white">
-            Home
+            Calculator
           </NavLink>
 
           <NavLink to="/LearnPage" className="text-zinc-400 hover:text-white">
@@ -72,7 +72,7 @@ export default function Navbar() {
             to="/BitcoinSecurity"
             className="text-zinc-400 hover:text-white"
           >
-            Secure Bitcoin
+            Bitcoin Security
           </NavLink>
         </div>
 
@@ -133,7 +133,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="text-zinc-300 hover:text-white"
                 >
-                  Home
+                  Calculator
                 </Link>
               </li>
 
@@ -153,7 +153,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="text-zinc-300 hover:text-white"
                 >
-                  Secure Bitcoin
+                  Bitcoin Security
                 </Link>
               </li>
 

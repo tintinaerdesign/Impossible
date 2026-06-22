@@ -64,29 +64,6 @@ export default function Hero() {
 
             <p className="text-pink-500 text-3xl font-['Cinzel']">The money.</p>
           </motion.div>
-
-          {/* CTA */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="
-          px-8 py-5
-          rounded-2xl
-          text-white
-          font-['Cinzel']
-          text-lg
-          bg-gradient-to-r
-          from-pink-600
-          via-pink-500
-          to-orange-400
-          flex items-center
-          gap-3
-          shadow-[0_0_40px_rgba(236,0,101,0.35)]
-        "
-          >
-            Start Learning
-            <ArrowRight size={22} />
-          </motion.button>
         </div>
       </div>
 
