@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import BoyCoin from "../../assets/BoyCoin.png";
+import BoyCoin from "../../assets/Boycoin.png";
 
 export default function Chapter1() {
   return (
