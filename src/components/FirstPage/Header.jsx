@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import TypeCalculate from "../Calculator/TypeCalculate";
 import { calculateInvestment } from "../FirstPage/Utility/calculateInvestment";
 
-
 import heroBg from "../../assets/kid-future.png";
 
 import MoreDetails from "../Calculator/MoreDetails";
@@ -75,7 +74,7 @@ export default function FirstPage() {
           <motion.h1
             initial={{ opacity: 0, y: 120 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.75 }}
             className="font-['Orbitron'] text-5xl font-bold bg-gradient-to-r from-[#f2a900] to-[#ec398f] bg-clip-text text-transparent"
           >
             Inflation Quietly
@@ -85,7 +84,7 @@ export default function FirstPage() {
           <motion.p
             initial={{ opacity: 0, y: 120 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.75 }}
             className="text-2xl max-w-xl text-zinc-400 mt-6"
           >
             See how saving in Bitcoin instead of cash can shape your tomorrow.
@@ -95,7 +94,7 @@ export default function FirstPage() {
             <motion.div
               initial={{ opacity: 0, y: 120 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
+              transition={{ delay: 0.1, duration: 0.75 }}
               className="flex min-w-[150px] flex-1 gap-3"
             >
               <div className="material-symbols-outlined text-white">shield</div>
@@ -107,7 +106,7 @@ export default function FirstPage() {
             <motion.div
               initial={{ opacity: 0, y: 120 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
+              transition={{ delay: 0.2, duration: 0.75 }}
               className="flex min-w-[150px] flex-1 gap-3"
             >
               <div className="material-symbols-outlined text-gray-300">
@@ -121,7 +120,7 @@ export default function FirstPage() {
             <motion.div
               initial={{ opacity: 0, y: 120 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
+              transition={{ delay: 0.1, duration: 0.75 }}
               className="flex min-w-[150px] flex-1 gap-3"
             >
               <div className="material-symbols-outlined text-gray-300">
@@ -136,7 +135,7 @@ export default function FirstPage() {
             <motion.div
               initial={{ opacity: 0, y: 120 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.4 }}
+              transition={{ delay: 0.2, duration: 0.75 }}
               className="flex min-w-[150px] flex-1 gap-3"
             >
               <div className="material-symbols-outlined text-gray-300">
