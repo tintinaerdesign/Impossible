@@ -4,6 +4,8 @@ import Navbar from "../components/common/Navbar.jsx";
 import Footer from "../components/common/Footer.jsx";
 
 import Next1 from "../components/LearnPage/Next1.jsx";
+import Next2 from "../components/LearnPage/Next2.jsx";
+
 import Continue from "../components/LearnPage/Continue.jsx";
 
 export default function NextChapter() {
@@ -14,6 +16,9 @@ export default function NextChapter() {
 
       {/* Chapter1 */}
       <Next1 />
+
+      {/* Chapter2 */}
+      <Next2 />
 
       {/* Continue */}
       <Continue />

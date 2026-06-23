@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import Footer from "../components/common/Footer";
 
 import RomeRoad from "../assets/RomeRoad.png";
+import LearnExplore from "../components/FirstPage/LearnExplore";
 
 export default function FirstPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -140,6 +141,9 @@ export default function FirstPage() {
           </div>
         </div>
       </section>
+
+      {/* LearnExplore */}
+      <LearnExplore />
 
       {/* Footer */}
       <Footer />

@@ -7,12 +7,7 @@ export default function Continue() {
     <section>
       <div
         className="
-        rounded-3xl
-        border
-        border-white/10
-        bg-gradient-to-r
-        from-[#ec0065]/10
-        to-[#f2a900]/10
+        
         p-10
         md:p-14
         text-center
@@ -53,8 +48,8 @@ export default function Continue() {
           py-4
           rounded-xl
           bg-gradient-to-r
-          from-[#ec0065]
-          to-[#f2a900]
+          from-blue-900
+          to-pink-500
           text-white
           font-semibold
           shadow-lg
